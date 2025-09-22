@@ -3,8 +3,8 @@ import React, { useRef, useEffect, useState } from 'react';
 import { useMapsLibrary } from '@vis.gl/react-google-maps';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { FormLabel } from '@/components/ui/form';
 import { Icons } from '@/app/components/icons';
+import { cn } from '@/lib/utils';
 
 interface LocationInputProps {
     onSearch: (address: string) => void;
@@ -49,10 +49,10 @@ export function LocationInput({ onSearch, onLocate, isLocating, isSearching }: L
   return (
     <div className='space-y-4'>
         <div className='space-y-2'>
-            <FormLabel className='flex items-center gap-2 font-semibold'>
+            <label className={cn('text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70', 'flex items-center gap-2 font-semibold')}>
                 <Icons.locate className='h-4 w-4' />
                 <span>Your Location</span>
-            </FormLabel>
+            </label>
             <p className='text-sm text-muted-foreground'>Enter your location to find hospitals near you.</p>
         </div>
         <form onSubmit={handleSearch} className="flex gap-2">
