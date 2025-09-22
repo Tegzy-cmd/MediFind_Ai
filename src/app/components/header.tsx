@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ThemeToggle } from './theme-toggle';
 import { Icons } from './icons';
+import { Button } from '@/components/ui/button';
 
 export function Header() {
   return (
@@ -13,6 +14,10 @@ export function Header() {
           </Link>
         </div>
         <div className="flex flex-1 items-center justify-end space-x-4">
+          <Button variant="destructive">
+            <Icons.phone className="mr-2 h-4 w-4" />
+            Emergency Hotline
+          </Button>
           <nav className="flex items-center space-x-1">
             <ThemeToggle />
           </nav>

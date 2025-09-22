@@ -22,7 +22,11 @@ import {
   Trash2,
   Edit,
   User,
-  MoreVertical
+  MoreVertical,
+  Clock,
+  Biohazard,
+  BrainCircuit,
+  FireExtinguisher
 } from 'lucide-react';
 
 export const Icons = {
@@ -50,6 +54,10 @@ export const Icons = {
   edit: Edit,
   user: User,
   moreVertical: MoreVertical,
+  clock: Clock,
+  biohazard: Biohazard,
+  brainCircuit: BrainCircuit,
+  fireExtinguisher: FireExtinguisher,
 };
 
 export const CustomHospitalMarker = () => (

@@ -1,11 +1,10 @@
 'use client';
-import React, { useState } from 'react';
-import { Input } from '@/components/ui/input';
+import React from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Icons } from './icons';
 import HospitalCard from './hospital-card';
 import type { RankedHospital } from '@/lib/types';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface HospitalListProps {
   hospitals: RankedHospital[];
@@ -14,50 +13,32 @@ interface HospitalListProps {
 }
 
 export default function HospitalList({ hospitals, onSelectHospital, selectedHospital }: HospitalListProps) {
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const filteredHospitals = hospitals.filter(
-    (hospital) =>
-      hospital.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      hospital.specialties.some((s) =>
-        s.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-  );
 
   return (
-    <Card className="h-full flex flex-col">
-      <CardHeader>
-        <CardTitle>Nearby Hospitals</CardTitle>
-        <div className="relative mt-2">
-          <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Filter by name or specialty..."
-            className="pl-9"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-      </CardHeader>
-      <CardContent className="p-0 flex-grow">
-        <ScrollArea className="h-[calc(80vh-150px)] lg:h-[calc(80vh-150px)]">
-          <div className="p-6 pt-0 space-y-4">
-            {filteredHospitals.length > 0 ? (
-              filteredHospitals.map((hospital) => (
-                <HospitalCard
-                  key={hospital.id}
-                  hospital={hospital}
-                  onSelect={() => onSelectHospital(hospital)}
-                  isSelected={selectedHospital?.id === hospital.id}
-                />
-              ))
-            ) : (
-              <p className="text-muted-foreground text-center py-8">
-                No hospitals match your search.
-              </p>
-            )}
-          </div>
-        </ScrollArea>
-      </CardContent>
-    </Card>
+    <ScrollArea className="h-full">
+      <div className="p-1 space-y-4">
+        {hospitals.length > 0 ? (
+          hospitals.map((hospital) => (
+            <HospitalCard
+              key={hospital.id}
+              hospital={hospital}
+              onSelect={() => onSelectHospital(hospital)}
+              isSelected={selectedHospital?.id === hospital.id}
+            />
+          ))
+        ) : (
+          Array.from({ length: 5 }).map((_, index) => (
+            <Card key={index} className="p-4 space-y-3">
+              <Skeleton className="h-5 w-3/4" />
+              <Skeleton className="h-4 w-1/4" />
+              <div className="flex gap-2">
+                <Skeleton className="h-5 w-1/4" />
+                <Skeleton className="h-5 w-1/4" />
+              </div>
+            </Card>
+          ))
+        )}
+      </div>
+    </ScrollArea>
   );
 }

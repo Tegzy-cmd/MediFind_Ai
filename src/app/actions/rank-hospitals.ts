@@ -25,20 +25,19 @@ export async function rankHospitalsBySymptoms(
   hospitals: Hospital[],
   userLocation: { lat: number, lng: number }
 ): Promise<RankedHospital[]> {
-  // 1. Filter hospitals to a reasonable radius (e.g., 50km) and calculate distances
-  const nearbyHospitals = hospitals
+  // 1. Calculate distances for all hospitals
+  const allHospitalsWithDistance = hospitals
     .map(hospital => ({
       ...hospital,
       distance: getDistance(userLocation, hospital.coordinates),
-    }))
-    .filter(hospital => hospital.distance <= 50);
+    }));
 
-  if (nearbyHospitals.length === 0) {
-    return [];
+  if (symptoms === 'Initial load') {
+    return allHospitalsWithDistance.sort((a,b) => a.distance - b.distance).slice(0, 20);
   }
 
-  // 2. Prepare data for the AI flow
-  const hospitalsForAI = nearbyHospitals.map(h => ({
+  // 2. Prepare data for the AI flow (use all hospitals for ranking)
+  const hospitalsForAI = allHospitalsWithDistance.map(h => ({
     name: h.name,
     specialties: h.specialties,
   }));
@@ -54,7 +53,7 @@ export async function rankHospitalsBySymptoms(
     rankedResults.map(r => [r.hospital, { rank: r.rank, reason: r.reason }])
   );
 
-  const mergedHospitals: RankedHospital[] = nearbyHospitals.map(hospital => {
+  const mergedHospitals: RankedHospital[] = allHospitalsWithDistance.map(hospital => {
     const ranking = rankedHospitalsMap.get(hospital.name);
     return {
       ...hospital,

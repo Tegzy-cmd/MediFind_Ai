@@ -4,7 +4,6 @@ import { Badge } from '@/components/ui/badge';
 import { Icons } from './icons';
 import type { RankedHospital } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { Separator } from '@/components/ui/separator';
 
 interface HospitalCardProps {
   hospital: RankedHospital;
@@ -21,38 +20,25 @@ export default function HospitalCard({ hospital, onSelect, isSelected }: Hospita
       )}
       onClick={onSelect}
     >
-      <CardHeader className="pb-3">
-        {hospital.rank && (
-          <Badge variant="default" className="w-fit bg-primary text-primary-foreground mb-2">
-            <Icons.sparkles className="h-3 w-3 mr-1.5" />
-            AI Pick #{hospital.rank}
-          </Badge>
-        )}
-        <CardTitle className="text-lg">{hospital.name}</CardTitle>
+      <CardHeader>
+        <div className="flex items-start justify-between">
+            <CardTitle className="text-base font-semibold">{hospital.name}</CardTitle>
+            <Icons.hospital className="h-5 w-5 text-muted-foreground"/>
+        </div>
         {hospital.distance && (
-          <CardDescription>{hospital.distance.toFixed(1)} km away</CardDescription>
+          <CardDescription className='pt-1'>{hospital.distance.toFixed(1)} km away</CardDescription>
         )}
       </CardHeader>
-      <CardContent className="space-y-3 pb-4">
-        {hospital.reason && (
-           <>
-            <Separator />
-            <p className="text-sm text-muted-foreground italic">
-                &quot;{hospital.reason}&quot;
-            </p>
-           </>
-        )}
-      </CardContent>
-      <CardFooter>
+      <CardContent>
         <div className="flex flex-wrap gap-2">
           {hospital.specialties.slice(0, 3).map((specialty) => (
-            <Badge key={specialty} variant="secondary">
+            <Badge key={specialty} variant="outline">
               {specialty}
             </Badge>
           ))}
-          {hospital.specialties.length > 3 && <Badge variant="secondary">...</Badge>}
+          {hospital.specialties.length > 3 && <Badge variant="outline">...</Badge>}
         </div>
-      </CardFooter>
+      </CardContent>
     </Card>
   );
 }

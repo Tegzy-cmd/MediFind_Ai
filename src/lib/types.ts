@@ -11,5 +11,5 @@ export type Hospital = {
 export type RankedHospital = Hospital & {
   rank?: number;
   reason?: string;
-  distance?: number;
+  distance: number;
 };
