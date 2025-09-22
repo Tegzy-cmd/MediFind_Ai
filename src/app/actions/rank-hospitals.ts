@@ -1,11 +1,11 @@
 'use server';
 import { rankHospitalsBySymptoms as rankHospitalsBySymptomsFlow } from '@/ai/flows/rank-hospitals-by-symptoms';
-import type { Hospital, RankedHospital } from '@/lib/types';
+import type { Hospital, RankedHospital, Coordinates } from '@/lib/types';
 
 // Haversine formula to calculate distance between two lat/lng points
 const getDistance = (
-    loc1: { lat: number; lng: number },
-    loc2: { lat: number; lng: number }
+    loc1: Coordinates,
+    loc2: Coordinates
   ) => {
     const R = 6371; // Radius of the Earth in km
     const dLat = (loc2.lat - loc1.lat) * (Math.PI / 180);
@@ -23,7 +23,7 @@ const getDistance = (
 export async function rankHospitalsBySymptoms(
   symptoms: string,
   hospitals: Hospital[],
-  userLocation: { lat: number, lng: number }
+  userLocation: Coordinates
 ): Promise<RankedHospital[]> {
   // 1. Calculate distances for all hospitals
   const allHospitalsWithDistance = hospitals
@@ -31,10 +31,6 @@ export async function rankHospitalsBySymptoms(
       ...hospital,
       distance: getDistance(userLocation, hospital.coordinates),
     }));
-
-  if (symptoms === 'Initial load') {
-    return allHospitalsWithDistance.sort((a,b) => a.distance - b.distance).slice(0, 20);
-  }
 
   // 2. Prepare data for the AI flow (use all hospitals for ranking)
   const hospitalsForAI = allHospitalsWithDistance.map(h => ({
@@ -62,8 +58,8 @@ export async function rankHospitalsBySymptoms(
     };
   });
 
-  // 5. Sort by AI rank
-  mergedHospitals.sort((a, b) => (a.rank ?? Infinity) - (b.rank ?? Infinity));
+  // 5. Sort by AI rank, then by distance
+  mergedHospitals.sort((a, b) => (a.rank ?? Infinity) - (b.rank ?? Infinity) || a.distance - b.distance);
   
   return mergedHospitals;
 }

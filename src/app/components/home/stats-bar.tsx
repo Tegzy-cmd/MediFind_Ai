@@ -1,7 +1,7 @@
 'use client';
 import { useRef, useEffect, useState } from 'react';
 import { useOnScreen } from '@/hooks/use-on-screen';
-import { Icons } from './icons';
+import { Icons } from '@/app/components/icons';
 
 function AnimatedCounter({ value }: { value: number }) {
   const [count, setCount] = useState(0);

@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { ThemeToggle } from './theme-toggle';
-import { Icons } from './icons';
+import { ThemeToggle } from '@/app/components/theme-toggle';
+import { Icons } from '@/app/components/icons';
 import { Button } from '@/components/ui/button';
 
 export function Header() {
@@ -28,5 +28,3 @@ export function Header() {
     </header>
   );
 }
-
-    

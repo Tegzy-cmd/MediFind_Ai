@@ -13,3 +13,8 @@ export type RankedHospital = Hospital & {
   reason?: string;
   distance: number;
 };
+
+export type Coordinates = {
+  lat: number;
+  lng: number;
+};

@@ -2,17 +2,17 @@
 
 import React, { useEffect, useRef } from 'react';
 import { Map, AdvancedMarker, Pin } from '@vis.gl/react-google-maps';
-import type { RankedHospital } from '@/lib/types';
-import { CustomHospitalMarker, UserMarker } from './icons';
+import type { RankedHospital, Coordinates } from '@/lib/types';
+import { CustomHospitalMarker, UserMarker } from '../icons';
 
 interface MapViewProps {
   hospitals: RankedHospital[];
-  userLocation: { lat: number; lng: number };
+  userLocation: Coordinates;
   selectedHospital: RankedHospital | null;
   onSelectHospital: (hospital: RankedHospital) => void;
 }
 
-export default function MapView({ hospitals, userLocation, selectedHospital, onSelectHospital }: MapViewProps) {
+export function MapView({ hospitals, userLocation, selectedHospital, onSelectHospital }: MapViewProps) {
     const mapRef = useRef<google.maps.Map | null>(null);
 
     useEffect(() => {

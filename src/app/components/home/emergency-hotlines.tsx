@@ -1,6 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Icons } from "./icons";
+import { Icons } from "@/app/components/icons";
 
 const hotlines = [
     { name: "General Emergency", number: "911", tel: "911", icon: <Icons.alertTriangle className="h-8 w-8 mb-4"/> },
@@ -20,9 +19,11 @@ export function EmergencyHotlines() {
                     {hotlines.map(hotline => (
                          <Card key={hotline.name} className="bg-destructive-foreground/10 border-destructive-foreground/20">
                             <CardContent className="p-6 text-center flex flex-col items-center justify-center">
-                                {hotline.icon}
-                                <h3 className="font-semibold text-xl">{hotline.number}</h3>
-                                <p className="text-sm text-destructive-foreground/80 mt-1">{hotline.name}</p>
+                                <a href={`tel:${hotline.tel}`}>
+                                    {hotline.icon}
+                                    <h3 className="font-semibold text-xl">{hotline.number}</h3>
+                                    <p className="text-sm text-destructive-foreground/80 mt-1">{hotline.name}</p>
+                                </a>
                             </CardContent>
                          </Card>
                     ))}

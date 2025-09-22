@@ -10,16 +10,17 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Icons } from './icons';
-import type { RankedHospital } from '@/lib/types';
+import { Icons } from '../icons';
+import type { RankedHospital, Coordinates } from '@/lib/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface HospitalDetailsSheetProps {
   hospital: RankedHospital | null;
   onOpenChange: (isOpen: boolean) => void;
+  userLocation: Coordinates | null;
 }
 
-export default function HospitalDetailsSheet({ hospital, onOpenChange }: HospitalDetailsSheetProps) {
+export function HospitalDetails({ hospital, onOpenChange, userLocation }: HospitalDetailsSheetProps) {
   const isOpen = !!hospital;
 
   return (
@@ -37,8 +38,8 @@ export default function HospitalDetailsSheet({ hospital, onOpenChange }: Hospita
               <SheetTitle className="text-2xl">{hospital.name}</SheetTitle>
               <SheetDescription>
                 {hospital.address}
-                <span className="mx-2">•</span>
-                {hospital.distance?.toFixed(1)} km away
+                {hospital.distance != null && <span className="mx-2">•</span>}
+                {hospital.distance != null && `${hospital.distance.toFixed(1)} km away`}
               </SheetDescription>
             </SheetHeader>
             <div className="flex gap-2 p-6 pt-0">

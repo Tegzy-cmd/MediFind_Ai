@@ -1,5 +1,5 @@
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Icons } from "./icons";
+import { Icons } from "@/app/components/icons";
 
 const features = [
     {
@@ -19,7 +19,7 @@ const features = [
     }
 ]
 
-export function FeaturesSection() {
+export function Features() {
     return (
         <section className="container py-12 md:py-24">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
