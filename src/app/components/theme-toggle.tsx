@@ -1,21 +1,43 @@
-'use client';
+"use client";
 
-import { useTheme } from 'next-themes';
-import { Button } from '@/components/ui/button';
-import { Icons } from './icons';
+import * as React from "react";
+import { useTheme } from "next-themes";
+import { Moon, Sun } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 export function ThemeToggle() {
-  const { setTheme, theme } = useTheme();
+  const { theme, setTheme } = useTheme();
 
   return (
-    <Button
-      variant="ghost"
-      size="icon"
-      onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-    >
-      <Icons.sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-      <Icons.moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-      <span className="sr-only">Toggle theme</span>
-    </Button>
+    <div className="relative h-8 w-[4.5rem] rounded-full bg-secondary p-1">
+      <div
+        className={cn(
+          "absolute top-1/2 h-6 w-8 -translate-y-1/2 rounded-full bg-background shadow-md transition-transform",
+          theme === "dark" ? "translate-x-[2.125rem]" : "translate-x-[0.125rem]"
+        )}
+      />
+      <div className="relative z-10 flex items-center justify-around">
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          className="h-6 w-6 rounded-full"
+          onClick={() => setTheme("light")}
+          aria-label="Switch to light mode"
+        >
+          <Sun className="h-4 w-4 text-foreground" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          className="h-6 w-6 rounded-full"
+          onClick={() => setTheme("dark")}
+          aria-label="Switch to dark mode"
+        >
+          <Moon className="h-4 w-4 text-foreground" />
+        </Button>
+      </div>
+    </div>
   );
 }
