@@ -34,7 +34,7 @@ const specialties = ["Orthopedics", "General Surgery", "Dentistry"];
 export default function SymptomChecker() {
   const [hospitals, setHospitals] = useState<RankedHospital[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isListVisible, setIsListVisible] = useState(true); // Default to true
+  const [isListVisible, setIsListVisible] = useState(true);
   const [selectedHospital, setSelectedHospital] = useState<RankedHospital | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const { toast } = useToast();
@@ -60,11 +60,25 @@ export default function SymptomChecker() {
       });
       return;
     }
-    // Set a default location for initial map load
-    if(!userLocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+      },
+      () => {
+        toast({
+          variant: 'destructive',
+          title: 'Geolocation Error',
+          description: 'Could not get your location. Please enter it manually or enable location services.',
+        });
+        // Set a default location if geolocation fails
         setUserLocation({ lat: 6.5244, lng: 3.3792 }); // Default to Lagos, Nigeria
-    }
-  }, [toast, userLocation]);
+      }
+    );
+  }, [toast]);
+
 
   useEffect(() => {
     handleGeolocation();
@@ -172,7 +186,7 @@ export default function SymptomChecker() {
                 transition={{ duration: 0.5 }}
                 className="grid grid-cols-1 lg:grid-cols-3 gap-8"
               >
-                <div className="lg:col-span-1 h-[60vh] lg:h-[calc(100vh-12rem)]">
+                <div className="lg:col-span-1 h-[70vh] lg:h-[calc(100vh-12rem)]">
                    <Card className="h-full flex flex-col">
                         <CardHeader>
                             <CardTitle>MediFind</CardTitle>
@@ -191,7 +205,7 @@ export default function SymptomChecker() {
                         </CardContent>
                    </Card>
                 </div>
-                <div className="lg:col-span-2 rounded-lg overflow-hidden h-[60vh] lg:h-[calc(100vh-12rem)]">
+                <div className="lg:col-span-2 rounded-lg overflow-hidden h-[70vh] lg:h-[calc(100vh-12rem)]">
                   <MapView
                     hospitals={hospitals}
                     userLocation={userLocation}
