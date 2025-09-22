@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 
 export function Header() {
   return (
-    <>
+    <header className="sticky top-0 z-20">
       <div className="bg-destructive text-destructive-foreground py-2 px-4 text-center text-sm font-medium animate-pulse-emergency">
         <div className="container mx-auto flex items-center justify-center gap-2 sm:gap-4">
             <Icons.alertTriangle className="h-5 w-5 sm:h-4 sm:w-4" />
@@ -19,8 +19,8 @@ export function Header() {
              </Button>
         </div>
       </div>
-      <header className="flex items-center justify-between p-4 border-b bg-card/50 backdrop-blur-sm shadow-sm sticky top-0 z-20">
-        <div className="container mx-auto flex items-center justify-between">
+      <div className="border-b bg-card/50 backdrop-blur-sm shadow-sm">
+        <div className="container mx-auto flex items-center justify-between p-4">
             <div className="flex items-center gap-2">
               <Icons.hospital className="h-7 w-7 text-primary" />
               <h1 className="text-2xl font-bold text-foreground">MediFind</h1>
@@ -35,7 +35,7 @@ export function Header() {
               <ThemeToggle />
             </div>
         </div>
-      </header>
-    </>
+      </div>
+    </header>
   );
 }
