@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatedCounter } from "./animated-counter";
-import { Hospital, Clock, HeartPulse, Users, Sparkles } from "lucide-react";
+import { Hospital, Clock, HeartPulse, Sparkles } from "lucide-react";
 
 interface Stat {
   value?: number;
