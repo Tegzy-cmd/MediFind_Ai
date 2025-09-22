@@ -26,7 +26,8 @@ import {
   Clock,
   Biohazard,
   BrainCircuit,
-  FireExtinguisher
+  FireExtinguisher,
+  Copyright
 } from 'lucide-react';
 
 export const Icons = {
@@ -58,6 +59,7 @@ export const Icons = {
   biohazard: Biohazard,
   brainCircuit: BrainCircuit,
   fireExtinguisher: FireExtinguisher,
+  copyright: Copyright,
 };
 
 export const CustomHospitalMarker = () => (
