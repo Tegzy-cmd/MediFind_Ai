@@ -14,10 +14,12 @@ export function Header() {
           </Link>
         </div>
         <div className="flex flex-1 items-center justify-end space-x-4">
-          <Button variant="destructive">
-            <Icons.phone className="mr-2 h-4 w-4" />
-            Emergency Hotline
-          </Button>
+          <a href="tel:911">
+            <Button variant="destructive">
+                <Icons.phone className="mr-2 h-4 w-4" />
+                Emergency Hotline
+            </Button>
+          </a>
           <nav className="flex items-center space-x-1">
             <ThemeToggle />
           </nav>
@@ -26,3 +28,5 @@ export function Header() {
     </header>
   );
 }
+
+    
