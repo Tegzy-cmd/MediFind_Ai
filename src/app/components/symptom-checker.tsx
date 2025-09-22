@@ -21,7 +21,6 @@ import type { RankedHospital } from '@/lib/types';
 import HospitalList from './hospital-list';
 import MapView from './map-view';
 import HospitalDetailsSheet from './hospital-details-sheet';
-import { Badge } from '@/components/ui/badge';
 
 const formSchema = z.object({
   symptoms: z.string().min(10, 'Please describe your symptoms in more detail.'),
@@ -29,11 +28,10 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-const specialties = ["Orthopedics", "General Surgery", "Dentistry"];
-
 export default function SymptomChecker() {
   const [hospitals, setHospitals] = useState<RankedHospital[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSearching, setIsSearching] = useState(false);
   const [isListVisible, setIsListVisible] = useState(true);
   const [selectedHospital, setSelectedHospital] = useState<RankedHospital | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -58,6 +56,7 @@ export default function SymptomChecker() {
         title: 'Geolocation Error',
         description: 'Geolocation is not supported by your browser.',
       });
+      setUserLocation({ lat: 6.5244, lng: 3.3792 }); // Default to Lagos, Nigeria
       return;
     }
     navigator.geolocation.getCurrentPosition(
@@ -73,7 +72,6 @@ export default function SymptomChecker() {
           title: 'Geolocation Error',
           description: 'Could not get your location. Please enter it manually or enable location services.',
         });
-        // Set a default location if geolocation fails
         setUserLocation({ lat: 6.5244, lng: 3.3792 }); // Default to Lagos, Nigeria
       }
     );
@@ -150,7 +148,7 @@ export default function SymptomChecker() {
       });
       return;
     }
-    setIsLoading(true);
+    setIsSearching(true);
     setSelectedHospital(null);
     try {
       const allHospitals = await getHospitals();
@@ -166,7 +164,7 @@ export default function SymptomChecker() {
         description: 'Could not rank hospitals. Please try again.',
       });
     } finally {
-      setIsLoading(false);
+      setIsSearching(false);
     }
   };
 
@@ -176,50 +174,115 @@ export default function SymptomChecker() {
 
   return (
     <>
-      <section className="container pt-8 md:pt-12">
-          <AnimatePresence>
-            {isListVisible && userLocation && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.5 }}
-                className="grid grid-cols-1 lg:grid-cols-3 gap-8"
-              >
-                <div className="lg:col-span-1 h-[70vh] lg:h-[calc(100vh-12rem)]">
-                   <Card className="h-full flex flex-col">
-                        <CardHeader>
-                            <CardTitle>MediFind</CardTitle>
-                             <div className="flex flex-wrap gap-2 pt-2">
-                                {specialties.map((spec) => (
-                                    <Badge key={spec} variant="outline">{spec}</Badge>
-                                ))}
+      <section className="container py-8 md:py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            <div className="lg:col-span-1">
+                 <Card>
+                    <CardHeader>
+                        <CardTitle className="text-2xl font-bold font-headline">Symptom Checker</CardTitle>
+                        <CardDescription>Enter your symptoms to find the best-suited medical facility near you.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Form {...form}>
+                          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                            <div className="space-y-2">
+                               <FormLabel htmlFor="location">Your Location</FormLabel>
+                                <div className="flex gap-2">
+                                  <div className="relative w-full">
+                                    <Icons.mapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                    <Input
+                                      id="location"
+                                      ref={inputRef}
+                                      value={locationInput}
+                                      onChange={(e) => setLocationInput(e.target.value)}
+                                      placeholder="Enter your address or city"
+                                      className="pl-9"
+                                    />
+                                  </div>
+                                  <Button type="button" variant="outline" size="icon" onClick={handleGeolocation} aria-label="Detect current location">
+                                    <Icons.locate className="h-4 w-4" />
+                                  </Button>
+                                </div>
                             </div>
-                        </CardHeader>
-                        <CardContent className="p-0 flex-grow">
-                             <HospitalList
-                                hospitals={hospitals}
-                                onSelectHospital={handleSelectHospital}
-                                selectedHospital={selectedHospital}
-                              />
-                        </CardContent>
-                   </Card>
-                </div>
-                <div className="lg:col-span-2 rounded-lg overflow-hidden h-[70vh] lg:h-[calc(100vh-12rem)]">
-                  <MapView
-                    hospitals={hospitals}
-                    userLocation={userLocation}
-                    selectedHospital={selectedHospital}
-                    onSelectHospital={handleSelectHospital}
-                  />
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-          <HospitalDetailsSheet
+                            <FormField
+                              control={form.control}
+                              name="symptoms"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Describe your symptoms</FormLabel>
+                                  <FormControl>
+                                    <Textarea
+                                      placeholder="e.g., 'Severe chest pain and difficulty breathing for the last 2 hours...'"
+                                      className="resize-none"
+                                      rows={5}
+                                      {...field}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <Button type="submit" className="w-full" disabled={isSearching}>
+                              {isSearching ? (
+                                <>
+                                 <Icons.sparkles className="mr-2 h-4 w-4 animate-spin" />
+                                 Analyzing...
+                                </>
+                              ) : (
+                                <>
+                                  <Icons.search className="mr-2 h-4 w-4" />
+                                  Find Hospitals
+                                </>
+                              )}
+                            </Button>
+                          </form>
+                        </Form>
+                    </CardContent>
+                 </Card>
+            </div>
+            <div className="lg:col-span-2">
+                <AnimatePresence>
+                    {userLocation && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.5 }}
+                        className="grid grid-cols-1 md:grid-cols-3 gap-6 h-[75vh]"
+                    >
+                        <div className="md:col-span-1 h-full">
+                            <Card className="h-full flex flex-col">
+                                <CardHeader>
+                                    <CardTitle>Nearby Hospitals</CardTitle>
+                                    <CardDescription>Ranked by relevance to your symptoms.</CardDescription>
+                                </CardHeader>
+                                <CardContent className="p-0 flex-grow">
+                                    <HospitalList
+                                        hospitals={hospitals}
+                                        onSelectHospital={handleSelectHospital}
+                                        selectedHospital={selectedHospital}
+                                        isLoading={isLoading}
+                                    />
+                                </CardContent>
+                            </Card>
+                        </div>
+                        <div className="md:col-span-2 rounded-lg overflow-hidden h-full">
+                        <MapView
+                            hospitals={hospitals}
+                            userLocation={userLocation}
+                            selectedHospital={selectedHospital}
+                            onSelectHospital={handleSelectHospital}
+                        />
+                        </div>
+                    </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+        </div>
+        <HospitalDetailsSheet
             hospital={selectedHospital}
             onOpenChange={(isOpen) => !isOpen && setSelectedHospital(null)}
-          />
+        />
       </section>
     </>
   );
