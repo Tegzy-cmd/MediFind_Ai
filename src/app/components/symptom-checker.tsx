@@ -132,7 +132,8 @@ export default function SymptomChecker() {
     setSelectedHospital(null);
     try {
       const allHospitals = await getHospitals();
-      const ranked = await rankHospitalsBySymptoms(data.symptoms, allHospitals, userLocation);
+      const uniqueHospitals = Array.from(new Map(allHospitals.map(h => [h.name, h])).values());
+      const ranked = await rankHospitalsBySymptoms(data.symptoms, uniqueHospitals, userLocation);
       setHospitals(ranked);
       setIsListVisible(true);
     } catch (error) {
@@ -154,11 +155,11 @@ export default function SymptomChecker() {
   return (
     <section className="container py-12 md:py-20">
       <div className="mx-auto max-w-4xl text-center">
-        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl font-headline">
+        <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl font-headline">
           Find The Right Hospital, <span className="text-primary">Fast</span>.
         </h1>
         <p className="mt-6 text-lg text-muted-foreground">
-          Describe your symptoms, and our AI will rank the best-equipped hospitals near you.
+          Quick access to emergency healthcare facilities with AI-powered recommendations.
         </p>
       </div>
 
@@ -166,32 +167,35 @@ export default function SymptomChecker() {
         <CardContent className="p-6">
           <FormProvider {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-6">
                 <div className="space-y-2">
                   <FormLabel htmlFor="location-input">Your Location</FormLabel>
                   <div className="flex gap-2">
-                    <Input
-                      id="location-input"
-                      ref={inputRef}
-                      value={locationInput}
-                      onChange={(e) => setLocationInput(e.target.value)}
-                      placeholder="Enter a city or address..."
-                    />
-                    <Button type="button" variant="outline" size="icon" onClick={handleGeolocation} aria-label="Detect Location">
-                      <Icons.locate className="h-5 w-5" />
+                    <div className='relative flex-grow'>
+                        <Icons.locate className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                        <Input
+                          id="location-input"
+                          ref={inputRef}
+                          value={locationInput}
+                          onChange={(e) => setLocationInput(e.target.value)}
+                          placeholder="e.g. Lagos, Nigeria"
+                          className='pl-10'
+                        />
+                    </div>
+                    <Button type="button" variant="outline" onClick={handleGeolocation} aria-label="Detect Location">
+                      Detect
                     </Button>
                   </div>
-                  <p className="text-xs text-muted-foreground">Start typing for autocomplete or use the icon to find your location.</p>
                 </div>
                 <FormField
                   control={form.control}
                   name="symptoms"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Describe your symptoms</FormLabel>
+                      <FormLabel>AI Symptom Analysis</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="e.g., 'I have sharp chest pain and difficulty breathing...'"
+                          placeholder="e.g., 'Chest pain' or 'Possible broken arm'"
                           className="min-h-[100px]"
                           {...field}
                         />

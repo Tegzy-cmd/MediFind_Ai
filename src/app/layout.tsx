@@ -4,7 +4,7 @@ import { ClientProviders } from './components/client-providers';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'MediFind AI',
+  title: 'MediFind',
   description: 'Find the best medical facility for your needs.',
   icons: {
     icon: '/favicon.ico',
@@ -21,7 +21,7 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased">
         <ClientProviders>
