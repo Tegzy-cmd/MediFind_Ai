@@ -4,7 +4,6 @@
 import type { Hospital } from "@/lib/types";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { Header } from "@/app/components/layout/header";
 import { MapView } from "@/app/components/finder/map-view";
 import { HospitalList } from "@/app/components/finder/hospital-list";
 import { HospitalDetails } from "@/app/components/finder/hospital-details";
@@ -17,7 +16,6 @@ import { SymptomChecker } from "@/app/components/finder/symptom-checker";
 import { StatsBar } from "@/app/components/home/stats-bar";
 import { Features } from "@/app/components/home/features";
 import { EmergencyHotlines } from "@/app/components/home/emergency-hotlines";
-import { Footer } from "@/app/components/layout/footer";
 import type { RankedHospital, Coordinates } from "@/lib/types";
 
 const haversineDistance = (
@@ -188,7 +186,6 @@ export default function Home() {
 
   return (
       <div className="flex flex-col min-h-screen bg-background text-foreground font-sans">
-        <Header />
         <main className="flex-1">
           <section className="container mx-auto px-4 py-8">
             <div className="text-center mb-8">
@@ -246,7 +243,6 @@ export default function Home() {
             onOpenChange={(open) => !open && setSelectedHospital(null)}
           />
         )}
-        <Footer />
       </div>
   );
 }
