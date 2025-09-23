@@ -89,7 +89,6 @@ export default function AdminPage() {
     <div className="container py-8 md:py-12">
       <div className="mb-8 text-center">
         <h1 className="text-3xl md:text-4xl font-bold font-headline mb-2">Hospital Management</h1>
-        <p className="text-md text-muted-foreground">Add, edit, or remove hospital data.</p>
       </div>
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="grid grid-cols-1 md:grid-cols-12 gap-8">
