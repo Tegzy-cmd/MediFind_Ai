@@ -93,81 +93,83 @@ export default function AdminPage() {
         <h1 className="text-3xl md:text-4xl font-bold font-headline mb-2">Hospital Management</h1>
       </div>
       
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div className="space-y-1.5">
-            <CardTitle>Existing Hospitals</CardTitle>
-            <CardDescription>Browse and manage all registered medical facilities.</CardDescription>
-          </div>
-          <Button onClick={handleAddNew}>
-            <Icons.add className="mr-2 h-4 w-4" /> Add Hospital
-          </Button>
-        </CardHeader>
-        <CardContent>
-          {loading ? (
-            <div className="space-y-4">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="flex items-center space-x-4">
-                  <Skeleton className="h-12 w-12 rounded-lg" />
-                  <div className="space-y-2 flex-1">
-                    <Skeleton className="h-4 w-3/4" />
-                    <Skeleton className="h-4 w-1/2" />
+      <div className="flex justify-center">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div className="space-y-1.5">
+              <CardTitle>Existing Hospitals</CardTitle>
+              <CardDescription>Browse and manage all registered medical facilities.</CardDescription>
+            </div>
+            <Button onClick={handleAddNew}>
+              <Icons.add className="mr-2 h-4 w-4" /> Add Hospital
+            </Button>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <div className="space-y-4">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="flex items-center space-x-4">
+                    <Skeleton className="h-12 w-12 rounded-lg" />
+                    <div className="space-y-2 flex-1">
+                      <Skeleton className="h-4 w-3/4" />
+                      <Skeleton className="h-4 w-1/2" />
+                    </div>
+                    <Skeleton className="h-8 w-8" />
                   </div>
-                  <Skeleton className="h-8 w-8" />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-            <Table className="min-w-[600px]">
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Address</TableHead>
-                  <TableHead>Specialties</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {hospitals.map((hospital) => (
-                  <TableRow key={hospital.id}>
-                    <TableCell className="font-medium whitespace-nowrap">{hospital.name}</TableCell>
-                    <TableCell className="whitespace-nowrap text-muted-foreground">{hospital.address}</TableCell>
-                    <TableCell>
-                      <div className="flex flex-wrap gap-1 min-w-[200px]">
-                        {hospital.specialties.slice(0, 3).map((s) => (
-                          <Badge key={s} variant="secondary" className="whitespace-nowrap">{s}</Badge>
-                        ))}
-                        {hospital.specialties.length > 3 && (
-                          <Badge variant="outline">+{hospital.specialties.length - 3}</Badge>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <Icons.moreVertical className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                          <DropdownMenuItem onSelect={() => handleEdit(hospital)}>
-                            <Icons.edit className="mr-2 h-4 w-4" /> Edit
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onSelect={() => handleDelete(hospital)} className="text-destructive focus:text-destructive focus:bg-destructive/10">
-                            <Icons.trash className="mr-2 h-4 w-4" /> Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
                 ))}
-              </TableBody>
-            </Table>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+              <Table className="min-w-[600px]">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Address</TableHead>
+                    <TableHead>Specialties</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {hospitals.map((hospital) => (
+                    <TableRow key={hospital.id}>
+                      <TableCell className="font-medium whitespace-nowrap">{hospital.name}</TableCell>
+                      <TableCell className="whitespace-nowrap text-muted-foreground">{hospital.address}</TableCell>
+                      <TableCell>
+                        <div className="flex flex-wrap gap-1 min-w-[200px]">
+                          {hospital.specialties.slice(0, 3).map((s) => (
+                            <Badge key={s} variant="secondary" className="whitespace-nowrap">{s}</Badge>
+                          ))}
+                          {hospital.specialties.length > 3 && (
+                            <Badge variant="outline">+{hospital.specialties.length - 3}</Badge>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <Icons.moreVertical className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent>
+                            <DropdownMenuItem onSelect={() => handleEdit(hospital)}>
+                              <Icons.edit className="mr-2 h-4 w-4" /> Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onSelect={() => handleDelete(hospital)} className="text-destructive focus:text-destructive focus:bg-destructive/10">
+                              <Icons.trash className="mr-2 h-4 w-4" /> Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
       
       <HospitalForm
         isOpen={isFormOpen}
