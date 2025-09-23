@@ -187,7 +187,10 @@ export default function Home() {
       <>
           <section className="container mx-auto px-4 py-8">
             <div className="text-center mb-8">
-                 <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-primary mb-2">Find Nearest Hospitals</h1>
+                 <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-2">
+                    <span className="text-foreground">Find Nearest </span>
+                    <span className="text-destructive">Hospitals</span>
+                 </h1>
                  <p className="text-lg text-muted-foreground">Quick access to emergency healthcare facilities with AI-powered recommendations.</p>
             </div>
 
