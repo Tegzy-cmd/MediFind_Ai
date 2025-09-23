@@ -63,7 +63,14 @@ export default function LoginPage() {
         data.password
       );
 
-      const profile = await getUserProfile(userCredential.user.uid);
+      let profile = await getUserProfile(userCredential.user.uid);
+
+      // If for some reason the profile doesn't exist, create it.
+      if (!profile) {
+        await createUserProfile(userCredential.user.uid, { email: userCredential.user.email! });
+        profile = await getUserProfile(userCredential.user.uid);
+      }
+
       if (profile?.role !== 'admin') {
          toast({
           variant: 'destructive',
