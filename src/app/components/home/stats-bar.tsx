@@ -29,7 +29,7 @@ export function StatsBar() {
               <div className="mb-2 text-destructive-foreground">
                 {stat.icon}
               </div>
-              <p className="text-4xl md:text-5xl font-bold tracking-tight">
+              <p className="text-4xl md:text-5xl font-bold tracking-tight text-center">
                 {stat.name ?? (
                   <AnimatedCounter
                     endValue={stat.value!}
@@ -38,7 +38,7 @@ export function StatsBar() {
                   />
                 )}
               </p>
-              <p className="text-sm font-medium uppercase tracking-wider text-destructive-foreground/80 mt-2">
+              <p className="text-sm font-medium uppercase tracking-wider text-destructive-foreground/80 mt-2 text-center">
                 {stat.description}
               </p>
             </div>
