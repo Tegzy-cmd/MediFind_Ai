@@ -3,11 +3,15 @@ import {
   signOut as firebaseSignOut,
   onAuthStateChanged as firebaseOnAuthStateChanged,
   createUserWithEmailAndPassword,
+  getApp,
+  getApps,
+  initializeApp,
   User,
 } from 'firebase/auth';
-import { auth } from './config';
+import { auth, db } from './config';
 import type { LoginFormValues, RegisterFormValues } from '@/lib/schema';
 import { FirebaseError } from 'firebase/app';
+import { createUserProfile } from './firestore';
 
 export async function signIn({ email, password }: LoginFormValues) {
   try {
@@ -19,7 +23,11 @@ export async function signIn({ email, password }: LoginFormValues) {
 
 export async function signUp({ email, password }: RegisterFormValues) {
   try {
-    return await createUserWithEmailAndPassword(auth, email, password);
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const { user } = userCredential;
+    // Create a user profile document in Firestore
+    await createUserProfile(user.uid, { email });
+    return userCredential;
   } catch (error) {
     throw error as FirebaseError;
   }

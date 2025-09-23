@@ -6,13 +6,18 @@ import {
   updateDoc,
   deleteDoc,
   getDoc,
+  setDoc,
+  query,
+  limit,
 } from 'firebase/firestore';
 import { db } from './config';
-import type { Hospital } from '@/lib/types';
+import type { Hospital, UserProfile } from '@/lib/types';
 import type { HospitalFormValues } from '@/lib/schema';
 
 const HOSPITAL_COLLECTION = 'hospitals';
+const USER_COLLECTION = 'users';
 
+// Hospital Functions
 export async function getHospitals(): Promise<Hospital[]> {
   const querySnapshot = await getDocs(collection(db, HOSPITAL_COLLECTION));
   return querySnapshot.docs.map(
@@ -67,4 +72,32 @@ export async function updateHospital(id: string, data: HospitalFormValues) {
 export async function deleteHospital(id: string) {
   const docRef = doc(db, HOSPITAL_COLLECTION, id);
   return deleteDoc(docRef);
+}
+
+// User Profile Functions
+export async function createUserProfile(uid: string, data: { email: string }) {
+  const usersRef = collection(db, USER_COLLECTION);
+  const q = query(usersRef, limit(1));
+  const snapshot = await getDocs(q);
+
+  let role = 'viewer';
+  // If there are no users in the database, make the first one an admin
+  if (snapshot.empty) {
+    role = 'admin';
+  }
+
+  return setDoc(doc(db, USER_COLLECTION, uid), {
+    ...data,
+    role,
+    createdAt: new Date(),
+  });
+}
+
+export async function getUserProfile(uid: string): Promise<UserProfile | null> {
+  const docRef = doc(db, USER_COLLECTION, uid);
+  const docSnap = await getDoc(docRef);
+  if (docSnap.exists()) {
+    return { uid: docSnap.id, ...docSnap.data() } as UserProfile;
+  }
+  return null;
 }

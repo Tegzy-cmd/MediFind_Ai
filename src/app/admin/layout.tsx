@@ -3,30 +3,26 @@ import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Preloader } from '../components/layout/preloader';
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { user, loading } = useAuth();
+  const { user, userProfile, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.push('/login');
+    if (!loading) {
+      if (!user || userProfile?.role !== 'admin') {
+        router.push('/login');
+      }
     }
-  }, [user, loading, router]);
+  }, [user, userProfile, loading, router]);
 
-  if (loading || !user) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="p-8 space-y-4 w-full">
-            <Skeleton className="h-12 w-1/4" />
-            <Skeleton className="h-96 w-full" />
-        </div>
-      </div>
-    );
+  if (loading || !user || userProfile?.role !== 'admin') {
+    return <Preloader />;
   }
 
   return <div className='bg-secondary min-h-screen'>{children}</div>;

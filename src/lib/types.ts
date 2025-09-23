@@ -18,3 +18,10 @@ export type Coordinates = {
   lat: number;
   lng: number;
 };
+
+export type UserProfile = {
+  uid: string;
+  email: string;
+  role: 'admin' | 'viewer';
+  createdAt: Date;
+};
