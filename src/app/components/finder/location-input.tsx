@@ -23,6 +23,7 @@ export function LocationInput({ onSearch, onLocate, isLocating, isSearching }: L
     if (!places || !inputRef.current) return;
     const autocompleteInstance = new places.Autocomplete(inputRef.current, {
       fields: ['formatted_address'],
+      componentRestrictions: { country: 'ng' },
     });
     setAutocomplete(autocompleteInstance);
   }, [places]);
