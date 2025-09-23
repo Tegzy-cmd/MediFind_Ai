@@ -196,17 +196,17 @@ export default function Home() {
 
   return (
       <>
-          <section className="container mx-auto px-4 py-8">
+          <section className="container mx-auto px-4 py-8 md:py-12">
             <div className="text-center mb-8">
-                 <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-2">
+                 <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-2">
                     <span className="text-foreground">Find Nearest </span>
                     <span className="text-destructive">Hospitals</span>
                  </h1>
-                 <p className="text-lg text-muted-foreground">Quick access to emergency healthcare facilities with AI-powered recommendations.</p>
+                 <p className="text-md md:text-lg text-muted-foreground">Quick access to emergency healthcare facilities with AI-powered recommendations.</p>
             </div>
 
             <Card className="mb-8 shadow-lg bg-card/10 backdrop-blur-sm border-white/10">
-                <CardContent className="p-6">
+                <CardContent className="p-4 md:p-6">
                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
                         <LocationInput
                             onSearch={handleManualLocationSubmit}
@@ -220,8 +220,8 @@ export default function Home() {
                 </CardContent>
             </Card>
 
-           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-[75vh]">
-               <div className="lg:col-span-1 h-full">
+           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-auto lg:h-[75vh]">
+               <div className="lg:col-span-1 h-[60vh] lg:h-full">
                     <HospitalList
                         hospitals={displayedHospitals}
                         onSelectHospital={handleSelectHospital}
@@ -229,7 +229,7 @@ export default function Home() {
                         loadingState={loadingState}
                         />
                </div>
-               <div className="lg:col-span-2 h-full rounded-lg overflow-hidden">
+               <div className="lg:col-span-2 h-[60vh] lg:h-full rounded-lg overflow-hidden">
                  {userLocation && (
                     <Card className="h-full overflow-hidden shadow-lg">
                       <MapView
@@ -244,7 +244,7 @@ export default function Home() {
            </div>
           </section>
           
-          <div className="my-16">
+          <div className="my-12 md:my-16">
             <Features />
           </div>
           <EmergencyHotlines />

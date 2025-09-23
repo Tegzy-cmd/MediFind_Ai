@@ -25,7 +25,6 @@ import type { Hospital } from '@/lib/types';
 import HospitalForm from '@/app/components/admin/hospital-form';
 import DeleteHospitalDialog from '@/app/components/admin/delete-hospital-dialog';
 import { getHospitals } from '@/lib/firebase/firestore';
-import { Preloader } from '@/app/components/layout/preloader';
 
 export default function AdminPage() {
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
@@ -114,6 +113,7 @@ export default function AdminPage() {
                       <Icons.hospital className="h-16 w-16 animate-pulse text-primary" />
                     </div>
                   ) : (
+                    <div className="overflow-x-auto">
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -126,10 +126,10 @@ export default function AdminPage() {
                       <TableBody>
                         {hospitals.map((hospital) => (
                           <TableRow key={hospital.id}>
-                            <TableCell className="font-medium">{hospital.name}</TableCell>
-                            <TableCell>{hospital.address}</TableCell>
+                            <TableCell className="font-medium whitespace-nowrap">{hospital.name}</TableCell>
+                            <TableCell className="whitespace-nowrap">{hospital.address}</TableCell>
                             <TableCell>
-                              <div className="flex flex-wrap gap-1">
+                              <div className="flex flex-wrap gap-1 min-w-[200px]">
                                 {hospital.specialties.slice(0, 3).map((s) => (
                                   <Badge key={s} variant="secondary">{s}</Badge>
                                 ))}
@@ -159,6 +159,7 @@ export default function AdminPage() {
                         ))}
                       </TableBody>
                     </Table>
+                    </div>
                   )}
                 </CardContent>
               </Card>

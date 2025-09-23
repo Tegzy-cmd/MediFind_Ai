@@ -10,10 +10,10 @@ const hotlines = [
 
 export function EmergencyHotlines() {
   return (
-    <section className="bg-destructive text-destructive-foreground py-16">
+    <section className="bg-destructive text-destructive-foreground py-12 md:py-16">
       <div className="container mx-auto px-4 text-center">
         <h2 className="text-3xl font-bold mb-8 font-headline">Emergency Hotlines</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {hotlines.map((hotline, index) => (
             <a key={index} href={`tel:${hotline.number.replace(/-/g, "")}`} className="group">
               <Card className="bg-destructive/90 text-destructive-foreground group-hover:bg-background group-hover:text-foreground transition-all duration-300 shadow-xl border-destructive-foreground/20 group-hover:-translate-y-2">
