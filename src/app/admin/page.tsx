@@ -25,6 +25,7 @@ import type { Hospital } from '@/lib/types';
 import HospitalForm from '@/app/components/admin/hospital-form';
 import DeleteHospitalDialog from '@/app/components/admin/delete-hospital-dialog';
 import { getHospitals } from '@/lib/firebase/firestore';
+import { cn } from '@/lib/utils';
 
 export default function AdminPage() {
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
@@ -91,12 +92,12 @@ export default function AdminPage() {
       </div>
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="grid grid-cols-1 md:grid-cols-12 gap-8">
-        <TabsList className="flex-col h-fit p-2 md:col-span-3">
+        <TabsList className={cn("flex-col h-fit p-2 md:col-span-3", "flex-row md:flex-col")}>
           <TabsTrigger value="view" className="w-full justify-start">
-            <Icons.hospital className="mr-2" /> View Hospitals
+            <Icons.hospital className="mr-2 h-4 w-4" /> View Hospitals
           </TabsTrigger>
           <TabsTrigger value="create" className="w-full justify-start">
-            <Icons.add className="mr-2" /> Add New Hospital
+            <Icons.add className="mr-2 h-4 w-4" /> Add New Hospital
           </TabsTrigger>
         </TabsList>
 
@@ -114,7 +115,7 @@ export default function AdminPage() {
                     </div>
                   ) : (
                     <div className="overflow-x-auto">
-                    <Table>
+                    <Table className="min-w-[600px]">
                       <TableHeader>
                         <TableRow>
                           <TableHead>Name</TableHead>
@@ -131,7 +132,7 @@ export default function AdminPage() {
                             <TableCell>
                               <div className="flex flex-wrap gap-1 min-w-[200px]">
                                 {hospital.specialties.slice(0, 3).map((s) => (
-                                  <Badge key={s} variant="secondary">{s}</Badge>
+                                  <Badge key={s} variant="secondary" className="whitespace-nowrap">{s}</Badge>
                                 ))}
                                 {hospital.specialties.length > 3 && (
                                   <Badge variant="outline">+{hospital.specialties.length - 3}</Badge>

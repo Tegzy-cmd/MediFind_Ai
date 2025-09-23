@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -23,17 +24,17 @@ interface HospitalDetailsSheetProps {
 export function HospitalDetails({ hospital, onOpenChange, userLocation }: HospitalDetailsSheetProps) {
   const isOpen = !!hospital;
 
-  const directionsUrl = userLocation 
-    ? `https://www.google.com/maps/dir/${userLocation.lat},${userLocation.lng}/${hospital?.name}, ${hospital?.address}`
-    : `https://www.google.com/maps/dir/?api=1&destination=${hospital?.name}, ${hospital?.address}`;
+  const directionsUrl = userLocation && hospital
+    ? `https://www.google.com/maps/dir/${userLocation.lat},${userLocation.lng}/${hospital.coordinates.lat},${hospital.coordinates.lng}`
+    : hospital ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${hospital.name}, ${hospital.address}`)}` : '';
 
 
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
-      <SheetContent className="sm:max-w-lg w-[90vw] p-0">
+      <SheetContent className="sm:max-w-lg w-[90vw] p-0 flex flex-col">
         {hospital && (
           <>
-            <SheetHeader className="p-6">
+            <SheetHeader className="p-6 pb-4">
                 {hospital.rank && (
                     <Badge variant="default" className="w-fit bg-primary text-primary-foreground mb-2">
                         <Icons.sparkles className="h-3 w-3 mr-1.5" />
@@ -43,11 +44,15 @@ export function HospitalDetails({ hospital, onOpenChange, userLocation }: Hospit
               <SheetTitle className="text-2xl">{hospital.name}</SheetTitle>
               <SheetDescription>
                 {hospital.address}
-                {hospital.distance != null && <span className="mx-2">•</span>}
-                {hospital.distance != null && `${hospital.distance.toFixed(1)} km away`}
+                {hospital.distance != null && (
+                    <>
+                        <span className="mx-2">•</span>
+                        <span>{hospital.distance.toFixed(1)} km away</span>
+                    </>
+                )}
               </SheetDescription>
             </SheetHeader>
-            <div className="flex gap-2 p-6 pt-0">
+            <div className="flex gap-2 px-6">
               <Button asChild className="w-full">
                 <a href={directionsUrl} target="_blank" rel="noopener noreferrer">
                     <Icons.navigation className="mr-2 h-4 w-4" /> Get Directions
@@ -59,9 +64,9 @@ export function HospitalDetails({ hospital, onOpenChange, userLocation }: Hospit
                 </a>
               </Button>
             </div>
-            <Separator />
-            <ScrollArea className="h-[calc(100vh-220px)]">
-            <div className="p-6 space-y-6">
+            <Separator className="my-4"/>
+            <ScrollArea className="flex-1">
+            <div className="p-6 pt-0 space-y-6">
                 {hospital.reason && (
                     <div className="space-y-2">
                         <h3 className="font-semibold text-foreground">AI Recommendation</h3>

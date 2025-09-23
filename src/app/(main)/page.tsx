@@ -16,23 +16,8 @@ import { SymptomChecker } from "@/app/components/finder/symptom-checker";
 import { Features } from "@/app/components/home/features";
 import { EmergencyHotlines } from "@/app/components/home/emergency-hotlines";
 import type { RankedHospital, Coordinates } from "@/lib/types";
+import { haversineDistance } from "@/lib/utils";
 
-const haversineDistance = (
-  coords1: Coordinates,
-  coords2: Coordinates
-): number => {
-  const toRad = (x: number) => (x * Math.PI) / 180;
-  const R = 6371; // Earth's radius in kilometers
-  const dLat = toRad(coords2.lat - coords1.lat);
-  const dLon = toRad(coords2.lng - coords1.lng);
-  const lat1 = toRad(coords1.lat);
-  const lat2 = toRad(coords2.lat);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-};
 
 const DEFAULT_LOCATION: Coordinates = { lat: 4.9765, lng: 8.3473 }; // Calabar
 
@@ -120,7 +105,8 @@ export default function Home() {
       setAllHospitals(prevHospitals => 
         prevHospitals.map(h => {
           const rankedData = hospitalMap.get(h.id);
-          return rankedData ? { ...h, ...rankedData } : h;
+          // Keep original distance, but update rank and reason
+          return rankedData ? { ...h, rank: rankedData.rank, reason: rankedData.reason } : h;
         })
       );
 
@@ -142,16 +128,17 @@ export default function Home() {
 
 
   const handleManualLocationSubmit = useCallback(async (location: string) => {
-    if (!location) return;
+    const trimmedLocation = location.trim();
+    if (!trimmedLocation) return;
+    
     setLoadingState("searching");
     try {
-      // First, check if the location is one of our hospitals
-      const matchedHospital = allHospitals.find(h => h.name === location || h.address === location);
+      const matchedHospital = allHospitals.find(h => h.name.toLowerCase() === trimmedLocation.toLowerCase() || h.address.toLowerCase() === trimmedLocation.toLowerCase());
       if (matchedHospital) {
         setUserLocation(matchedHospital.coordinates);
         setSelectedHospital(matchedHospital);
       } else {
-        const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=${apiKey}`);
+        const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(trimmedLocation)}&key=${apiKey}`);
         const data = await response.json();
         if (data.status === 'OK' && data.results[0]) {
           const { lat, lng } = data.results[0].geometry.location;
@@ -159,7 +146,7 @@ export default function Home() {
         } else {
           toast({
             title: "Geocoding Error",
-            description: "Could not find coordinates for the location.",
+            description: `Could not find coordinates for "${trimmedLocation}".`,
             variant: "destructive",
           });
         }
