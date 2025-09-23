@@ -4,8 +4,6 @@ import { Toaster } from '@/components/ui/toaster';
 import { ClientProviders } from './components/client-providers';
 import './globals.css';
 import { cn } from '@/lib/utils';
-import { Header } from '@/app/components/layout/header';
-import { Footer } from '@/app/components/layout/footer';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -33,9 +31,7 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <ClientProviders>
-          <Header />
           {children}
-          <Footer />
           <Toaster />
         </ClientProviders>
       </body>
