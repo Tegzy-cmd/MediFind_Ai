@@ -26,6 +26,7 @@ import HospitalForm from '@/app/components/admin/hospital-form';
 import DeleteHospitalDialog from '@/app/components/admin/delete-hospital-dialog';
 import { getHospitals } from '@/lib/firebase/firestore';
 import { cn } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function AdminPage() {
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
@@ -92,11 +93,11 @@ export default function AdminPage() {
       </div>
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="grid grid-cols-1 md:grid-cols-12 gap-8">
-        <TabsList className={cn("flex-col h-fit p-2 md:col-span-3", "flex-row md:flex-col")}>
-          <TabsTrigger value="view" className="w-full justify-start">
+        <TabsList className={cn("flex-col h-fit p-2 md:col-span-3", "bg-card border rounded-lg", "flex-row md:flex-col")}>
+          <TabsTrigger value="view" className="w-full justify-start data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
             <Icons.hospital className="mr-2 h-4 w-4" /> View Hospitals
           </TabsTrigger>
-          <TabsTrigger value="create" className="w-full justify-start">
+          <TabsTrigger value="create" className="w-full justify-start data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
             <Icons.add className="mr-2 h-4 w-4" /> Add New Hospital
           </TabsTrigger>
         </TabsList>
@@ -110,8 +111,17 @@ export default function AdminPage() {
                 </CardHeader>
                 <CardContent>
                   {loading ? (
-                    <div className="flex justify-center items-center h-64">
-                      <Icons.hospital className="h-16 w-16 animate-pulse text-primary" />
+                    <div className="space-y-4">
+                      {Array.from({ length: 4 }).map((_, i) => (
+                        <div key={i} className="flex items-center space-x-4">
+                          <Skeleton className="h-12 w-12 rounded-lg" />
+                          <div className="space-y-2 flex-1">
+                            <Skeleton className="h-4 w-3/4" />
+                            <Skeleton className="h-4 w-1/2" />
+                          </div>
+                          <Skeleton className="h-8 w-8" />
+                        </div>
+                      ))}
                     </div>
                   ) : (
                     <div className="overflow-x-auto">
@@ -128,7 +138,7 @@ export default function AdminPage() {
                         {hospitals.map((hospital) => (
                           <TableRow key={hospital.id}>
                             <TableCell className="font-medium whitespace-nowrap">{hospital.name}</TableCell>
-                            <TableCell className="whitespace-nowrap">{hospital.address}</TableCell>
+                            <TableCell className="whitespace-nowrap text-muted-foreground">{hospital.address}</TableCell>
                             <TableCell>
                               <div className="flex flex-wrap gap-1 min-w-[200px]">
                                 {hospital.specialties.slice(0, 3).map((s) => (
@@ -150,7 +160,7 @@ export default function AdminPage() {
                                   <DropdownMenuItem onSelect={() => handleEdit(hospital)}>
                                     <Icons.edit className="mr-2 h-4 w-4" /> Edit
                                   </DropdownMenuItem>
-                                  <DropdownMenuItem onSelect={() => handleDelete(hospital)} className="text-destructive">
+                                  <DropdownMenuItem onSelect={() => handleDelete(hospital)} className="text-destructive focus:text-destructive focus:bg-destructive/10">
                                     <Icons.trash className="mr-2 h-4 w-4" /> Delete
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
@@ -180,7 +190,6 @@ export default function AdminPage() {
         </div>
       </Tabs>
       
-      {/* Dialogs for Edit and Delete */}
       <HospitalForm
         isDialog={true}
         isOpen={isFormOpen}
