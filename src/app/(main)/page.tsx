@@ -184,8 +184,7 @@ export default function Home() {
   }
 
   return (
-      <div className="flex flex-col min-h-screen bg-background text-foreground font-sans">
-        <main className="flex-1">
+      <>
           <section className="container mx-auto px-4 py-8">
             <div className="text-center mb-8">
                  <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-primary mb-2">Find Nearest Hospitals</h1>
@@ -230,10 +229,11 @@ export default function Home() {
            </div>
           </section>
           
-          <Features />
+          <div className="my-16">
+            <Features />
+          </div>
           <EmergencyHotlines />
 
-        </main>
         {selectedHospital && (
           <HospitalDetails
             hospital={selectedHospital}
@@ -241,6 +241,6 @@ export default function Home() {
             onOpenChange={(open) => !open && setSelectedHospital(null)}
           />
         )}
-      </div>
+      </>
   );
 }
