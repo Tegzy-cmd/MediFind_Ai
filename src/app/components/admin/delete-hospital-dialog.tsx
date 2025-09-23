@@ -18,9 +18,10 @@ interface DeleteHospitalDialogProps {
     isOpen: boolean;
     onOpenChange: (open: boolean) => void;
     hospital: Hospital | null;
+    onSuccess: () => void;
 }
 
-export default function DeleteHospitalDialog({ isOpen, onOpenChange, hospital }: DeleteHospitalDialogProps) {
+export default function DeleteHospitalDialog({ isOpen, onOpenChange, hospital, onSuccess }: DeleteHospitalDialogProps) {
     const { toast } = useToast();
 
     const handleDelete = async () => {
@@ -28,7 +29,7 @@ export default function DeleteHospitalDialog({ isOpen, onOpenChange, hospital }:
         try {
             await deleteHospital(hospital.id);
             toast({ title: 'Success', description: 'Hospital deleted successfully.' });
-            onOpenChange(false);
+            onSuccess();
         } catch (error) {
             toast({ variant: 'destructive', title: 'Error', description: 'Failed to delete hospital.' });
         }

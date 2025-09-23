@@ -24,16 +24,16 @@ import { hospitalSchema, type HospitalFormValues } from '@/lib/schema';
 import { addHospital, updateHospital } from '@/lib/firebase/firestore';
 import type { Hospital } from '@/lib/types';
 import { useEffect } from 'react';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface HospitalFormProps {
-  isDialog?: boolean;
-  isOpen?: boolean;
-  onOpenChange?: (open: boolean) => void;
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
   hospital?: Hospital | null;
-  onSuccess?: () => void;
+  onSuccess: () => void;
 }
 
-const HospitalFormContent = ({ hospital, onSuccess }: { hospital?: Hospital | null, onSuccess?: () => void }) => {
+export default function HospitalForm({ isOpen, onOpenChange, hospital, onSuccess }: HospitalFormProps) {
   const { toast } = useToast();
 
   const form = useForm<HospitalFormValues>({
@@ -50,28 +50,30 @@ const HospitalFormContent = ({ hospital, onSuccess }: { hospital?: Hospital | nu
   });
 
   useEffect(() => {
-    if (hospital) {
-      form.reset({
-        name: hospital.name,
-        address: hospital.address,
-        contact: hospital.contact,
-        lat: hospital.coordinates.lat,
-        lng: hospital.coordinates.lng,
-        specialties: hospital.specialties.join(', '),
-        services: hospital.services.join(', '),
-      });
-    } else {
+    if (isOpen) {
+      if (hospital) {
         form.reset({
-            name: '',
-            address: '',
-            contact: '',
-            lat: 0,
-            lng: 0,
-            specialties: '',
-            services: '',
+          name: hospital.name,
+          address: hospital.address,
+          contact: hospital.contact,
+          lat: hospital.coordinates.lat,
+          lng: hospital.coordinates.lng,
+          specialties: hospital.specialties.join(', '),
+          services: hospital.services.join(', '),
         });
+      } else {
+          form.reset({
+              name: '',
+              address: '',
+              contact: '',
+              lat: 0,
+              lng: 0,
+              specialties: '',
+              services: '',
+          });
+      }
     }
-  }, [hospital, form]);
+  }, [hospital, form, isOpen]);
 
   const onSubmit = async (data: HospitalFormValues) => {
     try {
@@ -82,7 +84,7 @@ const HospitalFormContent = ({ hospital, onSuccess }: { hospital?: Hospital | nu
         await addHospital(data);
         toast({ title: 'Success', description: 'Hospital added successfully.' });
       }
-      onSuccess?.();
+      onSuccess();
     } catch (error) {
       toast({
         variant: 'destructive',
@@ -93,85 +95,79 @@ const HospitalFormContent = ({ hospital, onSuccess }: { hospital?: Hospital | nu
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField name="name" control={form.control} render={({ field }) => (
-              <FormItem>
-                <FormLabel>Name</FormLabel>
-                <FormControl><Input {...field} /></FormControl>
-                <FormMessage />
-              </FormItem>
-          )} />
-          <FormField name="contact" control={form.control} render={({ field }) => (
-              <FormItem>
-                <FormLabel>Contact</FormLabel>
-                <FormControl><Input {...field} /></FormControl>
-                <FormMessage />
-              </FormItem>
-          )} />
-        </div>
-        <FormField name="address" control={form.control} render={({ field }) => (
-            <FormItem>
-                <FormLabel>Address</FormLabel>
-                <FormControl><Input {...field} /></FormControl>
-                <FormMessage />
-            </FormItem>
-        )} />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField name="lat" control={form.control} render={({ field }) => (
-              <FormItem>
-                <FormLabel>Latitude</FormLabel>
-                <FormControl><Input type="number" step="any" {...field} onChange={e => field.onChange(parseFloat(e.target.value))} /></FormControl>
-                <FormMessage />
-              </FormItem>
-          )} />
-          <FormField name="lng" control={form.control} render={({ field }) => (
-              <FormItem>
-                <FormLabel>Longitude</FormLabel>
-                <FormControl><Input type="number" step="any" {...field} onChange={e => field.onChange(parseFloat(e.target.value))} /></FormControl>
-                <FormMessage />
-              </FormItem>
-          )} />
-        </div>
-         <FormField name="specialties" control={form.control} render={({ field }) => (
-            <FormItem>
-                <FormLabel>Specialties</FormLabel>
-                <FormControl><Input placeholder="Cardiology, Neurology, ..." {...field} /></FormControl>
-                <FormMessage />
-            </FormItem>
-        )} />
-         <FormField name="services" control={form.control} render={({ field }) => (
-            <FormItem>
-                <FormLabel>Services</FormLabel>
-                <FormControl><Input placeholder="MRI, X-Ray, ..." {...field} /></FormControl>
-                <FormMessage />
-            </FormItem>
-        )} />
-        <Button type="submit" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting ? 'Saving...' : 'Save Hospital'}
-        </Button>
-      </form>
-    </Form>
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] flex flex-col">
+        <DialogHeader>
+          <DialogTitle>{hospital ? 'Edit Hospital' : 'Add New Hospital'}</DialogTitle>
+          <DialogDescription>
+            {hospital ? 'Update the details for this hospital.' : 'Fill in the details for the new hospital.'}
+          </DialogDescription>
+        </DialogHeader>
+        <ScrollArea className="pr-6 -mr-6">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField name="name" control={form.control} render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl><Input {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                )} />
+                <FormField name="contact" control={form.control} render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Contact</FormLabel>
+                      <FormControl><Input {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                )} />
+              </div>
+              <FormField name="address" control={form.control} render={({ field }) => (
+                  <FormItem>
+                      <FormLabel>Address</FormLabel>
+                      <FormControl><Input {...field} /></FormControl>
+                      <FormMessage />
+                  </FormItem>
+              )} />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField name="lat" control={form.control} render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Latitude</FormLabel>
+                      <FormControl><Input type="number" step="any" {...field} onChange={e => field.onChange(parseFloat(e.target.value))} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                )} />
+                <FormField name="lng" control={form.control} render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Longitude</FormLabel>
+                      <FormControl><Input type="number" step="any" {...field} onChange={e => field.onChange(parseFloat(e.target.value))} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                )} />
+              </div>
+              <FormField name="specialties" control={form.control} render={({ field }) => (
+                  <FormItem>
+                      <FormLabel>Specialties</FormLabel>
+                      <FormControl><Input placeholder="Cardiology, Neurology, ..." {...field} /></FormControl>
+                      <FormMessage />
+                  </FormItem>
+              )} />
+              <FormField name="services" control={form.control} render={({ field }) => (
+                  <FormItem>
+                      <FormLabel>Services</FormLabel>
+                      <FormControl><Input placeholder="MRI, X-Ray, ..." {...field} /></FormControl>
+                      <FormMessage />
+                  </FormItem>
+              )} />
+              <div className="flex justify-end pt-4">
+                <Button type="submit" disabled={form.formState.isSubmitting}>
+                  {form.formState.isSubmitting ? 'Saving...' : 'Save Hospital'}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </ScrollArea>
+      </DialogContent>
+    </Dialog>
   );
 };
-
-export default function HospitalForm({ isDialog, isOpen, onOpenChange, hospital, onSuccess }: HospitalFormProps) {
-  if (isDialog) {
-    return (
-      <Dialog open={isOpen} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>{hospital ? 'Edit Hospital' : 'Add New Hospital'}</DialogTitle>
-            <DialogDescription>
-              {hospital ? 'Update the details for this hospital.' : 'Fill in the details for the new hospital.'}
-            </DialogDescription>
-          </DialogHeader>
-          <HospitalFormContent hospital={hospital} onSuccess={onSuccess} />
-        </DialogContent>
-      </Dialog>
-    );
-  }
-
-  return <HospitalFormContent hospital={hospital} onSuccess={onSuccess} />;
-}
