@@ -40,7 +40,6 @@ export default function AdminPage() {
         const hospitalsData = await getHospitals();
         setHospitals(hospitalsData);
       } catch (e) {
-        console.error(e);
         setError('Failed to load hospital data.');
       } finally {
         setLoading(false);
