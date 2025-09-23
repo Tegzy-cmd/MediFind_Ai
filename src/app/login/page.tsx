@@ -1,6 +1,7 @@
 
 'use client';
 
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
@@ -32,10 +33,19 @@ import { auth } from '@/lib/firebase/config';
 import { FirebaseError } from 'firebase/app';
 import { Icons } from '@/app/components/icons';
 import { createUserProfile, getUserProfile } from '@/lib/firebase/firestore';
+import { useAuth } from '@/hooks/use-auth';
 
 export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const { user, userProfile, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading && user && userProfile?.role === 'admin') {
+      router.replace('/admin');
+    }
+  }, [user, userProfile, loading, router]);
+
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -135,6 +145,9 @@ export default function LoginPage() {
     }
   };
 
+  if (loading || (user && userProfile)) {
+    return null; // Render nothing while loading or redirecting
+  }
 
   return (
     <Card className="w-full max-w-sm">
