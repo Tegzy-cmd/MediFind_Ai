@@ -77,13 +77,13 @@ export default function LoginPage() {
           title: 'Permission Denied',
           description: 'You do not have permission to access the admin dashboard.',
         });
-        auth.signOut();
+        await auth.signOut();
         return;
       }
       
       toast({
         title: 'Login Successful',
-        description: 'Welcome back!',
+        description: 'Redirecting to dashboard...',
       });
       router.push('/admin');
     } catch (error) {
@@ -124,7 +124,7 @@ export default function LoginPage() {
 
     try {
         await signInWithEmailAndPassword(auth, email, password);
-        toast({ title: "Login Successful", description: "Welcome back, admin!" });
+        toast({ title: "Login Successful", description: "Welcome back, admin! Redirecting..." });
         router.push('/admin');
     } catch (error) {
         if (error instanceof FirebaseError && error.code === 'auth/user-not-found') {
@@ -132,8 +132,9 @@ export default function LoginPage() {
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 await createUserProfile(userCredential.user.uid, { email: userCredential.user.email!, role: 'admin' });
-                toast({ title: "Admin Account Created", description: "You have been logged in automatically." });
+                toast({ title: "Admin Account Created", description: "You have been logged in automatically. Redirecting..." });
                 router.push('/admin');
+
             } catch (creationError) {
                 const ce = creationError as FirebaseError;
                 toast({ variant: 'destructive', title: 'Account Creation Error', description: ce.message || 'Could not create admin account.' });
@@ -152,8 +153,9 @@ export default function LoginPage() {
     }
   };
 
-  if (loading || (user && userProfile)) {
-    return null; // Render nothing while loading or redirecting
+  if (loading || (user && userProfile?.role === 'admin')) {
+    // Show a loading or blank state while checking auth and redirecting
+    return null;
   }
 
   return (
