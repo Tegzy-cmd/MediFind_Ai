@@ -9,10 +9,13 @@ import {
   setDoc,
   query,
   limit,
+  getFirestore,
 } from 'firebase/firestore';
-import { db } from './config';
+import { app } from './config';
 import type { Hospital, UserProfile } from '@/lib/types';
 import type { HospitalFormValues } from '@/lib/schema';
+
+const db = getFirestore(app);
 
 const HOSPITAL_COLLECTION = 'hospitals';
 const USER_COLLECTION = 'users';
