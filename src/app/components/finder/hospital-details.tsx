@@ -23,6 +23,11 @@ interface HospitalDetailsSheetProps {
 export function HospitalDetails({ hospital, onOpenChange, userLocation }: HospitalDetailsSheetProps) {
   const isOpen = !!hospital;
 
+  const directionsUrl = userLocation 
+    ? `https://www.google.com/maps/dir/${userLocation.lat},${userLocation.lng}/${hospital?.coordinates.lat},${hospital?.coordinates.lng}`
+    : `https://www.google.com/maps/dir/?api=1&destination=${hospital?.coordinates.lat},${hospital?.coordinates.lng}`;
+
+
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetContent className="sm:max-w-lg w-[90vw] p-0">
@@ -44,7 +49,7 @@ export function HospitalDetails({ hospital, onOpenChange, userLocation }: Hospit
             </SheetHeader>
             <div className="flex gap-2 p-6 pt-0">
               <Button asChild className="w-full">
-                <a href={`https://www.google.com/maps/dir/?api=1&destination=${hospital.coordinates.lat},${hospital.coordinates.lng}`} target="_blank" rel="noopener noreferrer">
+                <a href={directionsUrl} target="_blank" rel="noopener noreferrer">
                     <Icons.navigation className="mr-2 h-4 w-4" /> Get Directions
                 </a>
               </Button>
