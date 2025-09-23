@@ -31,7 +31,7 @@ import { loginSchema, type LoginFormValues } from '@/lib/schema';
 import { auth } from '@/lib/firebase/config';
 import { FirebaseError } from 'firebase/app';
 import { Icons } from '@/app/components/icons';
-import { createUserProfile } from '@/lib/firebase/firestore';
+import { createUserProfile, getUserProfile } from '@/lib/firebase/firestore';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -52,9 +52,18 @@ export default function LoginPage() {
         data.email,
         data.password
       );
-      
-      await createUserProfile(userCredential.user.uid, { email: userCredential.user.email!, role: 'admin' });
 
+      const profile = await getUserProfile(userCredential.user.uid);
+      if (profile?.role !== 'admin') {
+         toast({
+          variant: 'destructive',
+          title: 'Permission Denied',
+          description: 'You do not have permission to access the admin dashboard.',
+        });
+        auth.signOut();
+        return;
+      }
+      
       toast({
         title: 'Login Successful',
         description: 'Welcome back!',
@@ -97,19 +106,25 @@ export default function LoginPage() {
     form.setValue('password', password);
 
     try {
-        await signInWithEmailAndPassword(auth, email, password);
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        toast({ title: "Login Successful", description: "Welcome back, admin!" });
         router.push('/admin');
     } catch (error) {
         if (error instanceof FirebaseError && (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential')) {
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                // The first user will automatically become an admin
-                await createUserProfile(userCredential.user.uid, { email: userCredential.user.email! });
+                await createUserProfile(userCredential.user.uid, { email: userCredential.user.email!, role: 'admin' });
                 toast({ title: "Admin Account Created", description: "You have been logged in automatically." });
                 router.push('/admin');
             } catch (creationError) {
-                toast({ variant: 'destructive', title: 'Creation Error', description: 'Could not create admin account.' });
+                if (creationError instanceof FirebaseError) {
+                    toast({ variant: 'destructive', title: 'Creation Error', description: creationError.message });
+                } else {
+                    toast({ variant: 'destructive', title: 'Creation Error', description: 'Could not create admin account.' });
+                }
             }
+        } else if (error instanceof FirebaseError) {
+             toast({ variant: 'destructive', title: 'Login Error', description: error.message });
         } else {
              toast({ variant: 'destructive', title: 'Login Error', description: 'An unexpected error occurred.' });
         }

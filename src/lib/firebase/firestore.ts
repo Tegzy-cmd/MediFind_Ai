@@ -82,27 +82,23 @@ export async function createUserProfile(uid: string, data: { email: string, role
   const userDocRef = doc(db, USER_COLLECTION, uid);
   const userDoc = await getDoc(userDocRef);
 
-  // If user profile already exists, do nothing
   if (userDoc.exists()) {
     return;
   }
-  
-  const usersRef = collection(db, USER_COLLECTION);
-  const q = query(usersRef, limit(1));
-  const snapshot = await getDocs(q);
 
-  // Default role is 'viewer'
-  let role = 'viewer';
-  
-  // If there are no users in the database, make the first one an admin
-  if (snapshot.empty) {
-    role = 'admin';
-  }
-
-  // If a role is explicitly passed, use it (for initial setup)
+  // If a role is explicitly passed (e.g., for the first admin), use it.
   if (data.role) {
-    role = data.role;
+    return setDoc(userDocRef, {
+      email: data.email,
+      role: data.role,
+      createdAt: new Date(),
+    });
   }
+
+  const usersQuery = query(collection(db, USER_COLLECTION), limit(1));
+  const snapshot = await getDocs(usersQuery);
+
+  const role = snapshot.empty ? 'admin' : 'viewer';
 
   return setDoc(userDocRef, {
     email: data.email,
