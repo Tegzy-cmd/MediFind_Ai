@@ -106,26 +106,30 @@ export default function LoginPage() {
     form.setValue('password', password);
 
     try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        await signInWithEmailAndPassword(auth, email, password);
         toast({ title: "Login Successful", description: "Welcome back, admin!" });
         router.push('/admin');
     } catch (error) {
-        if (error instanceof FirebaseError && (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential')) {
+        if (error instanceof FirebaseError && error.code === 'auth/user-not-found') {
+            // User does not exist, so create the account
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 await createUserProfile(userCredential.user.uid, { email: userCredential.user.email!, role: 'admin' });
                 toast({ title: "Admin Account Created", description: "You have been logged in automatically." });
                 router.push('/admin');
             } catch (creationError) {
-                if (creationError instanceof FirebaseError) {
-                    toast({ variant: 'destructive', title: 'Creation Error', description: creationError.message });
-                } else {
-                    toast({ variant: 'destructive', title: 'Creation Error', description: 'Could not create admin account.' });
-                }
+                const ce = creationError as FirebaseError;
+                toast({ variant: 'destructive', title: 'Account Creation Error', description: ce.message || 'Could not create admin account.' });
             }
         } else if (error instanceof FirebaseError) {
-             toast({ variant: 'destructive', title: 'Login Error', description: error.message });
+            // Handle other Firebase errors during sign-in (e.g., wrong password)
+            let description = error.message;
+            if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+                description = 'The password for the admin account is incorrect.';
+            }
+             toast({ variant: 'destructive', title: 'Login Error', description });
         } else {
+             // Handle non-Firebase errors
              toast({ variant: 'destructive', title: 'Login Error', description: 'An unexpected error occurred.' });
         }
     }
