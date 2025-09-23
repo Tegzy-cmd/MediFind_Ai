@@ -1,3 +1,4 @@
+
 'use client';
 import {
   AlertDialog,
@@ -10,7 +11,6 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
-import { useRouter } from 'next/navigation';
 import { deleteHospital } from '@/lib/firebase/firestore';
 import type { Hospital } from '@/lib/types';
 
@@ -21,7 +21,6 @@ interface DeleteHospitalDialogProps {
 }
 
 export default function DeleteHospitalDialog({ isOpen, onOpenChange, hospital }: DeleteHospitalDialogProps) {
-    const router = useRouter();
     const { toast } = useToast();
 
     const handleDelete = async () => {
@@ -29,7 +28,7 @@ export default function DeleteHospitalDialog({ isOpen, onOpenChange, hospital }:
         try {
             await deleteHospital(hospital.id);
             toast({ title: 'Success', description: 'Hospital deleted successfully.' });
-            router.refresh();
+            onOpenChange(false);
         } catch (error) {
             toast({ variant: 'destructive', title: 'Error', description: 'Failed to delete hospital.' });
         }
