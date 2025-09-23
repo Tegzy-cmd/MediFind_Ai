@@ -4,14 +4,11 @@ import {
   onAuthStateChanged as firebaseOnAuthStateChanged,
   createUserWithEmailAndPassword,
   User,
-  getAuth,
 } from 'firebase/auth';
-import { app } from './config';
+import { auth } from './config';
 import type { LoginFormValues, RegisterFormValues } from '@/lib/schema';
 import { FirebaseError } from 'firebase/app';
 import { createUserProfile } from './firestore';
-
-export const auth = getAuth(app);
 
 export async function signIn({ email, password }: LoginFormValues) {
   try {
