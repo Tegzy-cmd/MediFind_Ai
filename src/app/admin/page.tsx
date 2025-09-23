@@ -28,6 +28,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ThemeToggle } from '@/app/components/theme-toggle';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
+import { EmergencyHeatmap } from '@/app/components/admin/emergency-heatmap';
 
 export default function AdminPage() {
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
@@ -112,8 +113,19 @@ export default function AdminPage() {
         <h1 className="text-3xl md:text-4xl font-bold font-headline mb-2">Hospital Management</h1>
       </div>
       
-      <div className="flex justify-center px-4">
-        <Card className="w-full max-w-5xl">
+      <div className="flex flex-col gap-8 justify-center px-4">
+        <Card className="w-full max-w-5xl mx-auto">
+          <CardHeader className='pb-4'>
+            <CardTitle>Emergency Hotspots</CardTitle>
+            <CardDescription>A heatmap of locations where emergency searches originate.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[450px] rounded-lg overflow-hidden border">
+              <EmergencyHeatmap />
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="w-full max-w-5xl mx-auto">
           <CardHeader className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div className="space-y-1.5">
               <CardTitle>Existing Hospitals</CardTitle>

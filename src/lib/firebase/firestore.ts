@@ -12,13 +12,14 @@ import {
   limit,
 } from 'firebase/firestore';
 import { auth, db } from './config';
-import type { Hospital, UserProfile } from '@/lib/types';
+import type { Hospital, UserProfile, Coordinates } from '@/lib/types';
 import type { HospitalFormValues } from '@/lib/schema';
 import { signOut } from 'firebase/auth';
 
 
 const HOSPITAL_COLLECTION = 'hospitals';
 const USER_COLLECTION = 'users';
+const SEARCH_REQUEST_COLLECTION = 'searchRequests';
 
 // Hospital Functions
 export async function getHospitals(): Promise<Hospital[]> {
@@ -118,4 +119,24 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
 
 export async function signOutUser() {
   return signOut(auth);
+}
+
+// Search Request Functions
+export async function saveSearchRequest(coordinates: Coordinates) {
+  try {
+    await addDoc(collection(db, SEARCH_REQUEST_COLLECTION), {
+      coordinates,
+      timestamp: new Date(),
+    });
+  } catch (error) {
+    console.error("Error saving search request:", error);
+    // Don't block the user for this, just log it.
+  }
+}
+
+export async function getSearchRequests(): Promise<Coordinates[]> {
+    const querySnapshot = await getDocs(collection(db, SEARCH_REQUEST_COLLECTION));
+    return querySnapshot.docs
+        .map(doc => doc.data().coordinates)
+        .filter(coords => coords && typeof coords.lat === 'number' && typeof coords.lng === 'number');
 }

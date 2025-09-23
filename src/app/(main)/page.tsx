@@ -8,7 +8,7 @@ import { MapView } from "@/app/components/finder/map-view";
 import { HospitalList } from "@/app/components/finder/hospital-list";
 import { HospitalDetails } from "@/app/components/finder/hospital-details";
 import { rankHospitalsBySymptoms as getRankedHospitals } from "../actions/rank-hospitals";
-import { getHospitals } from "@/lib/firebase/firestore";
+import { getHospitals, saveSearchRequest } from "@/lib/firebase/firestore";
 import { Preloader } from "@/app/components/layout/preloader";
 import { Card, CardContent } from "@/components/ui/card";
 import { LocationInput } from "@/app/components/finder/location-input";
@@ -72,12 +72,17 @@ export default function Home() {
     init();
   }, [toast]);
 
+  const handleLocationUpdate = (coords: Coordinates) => {
+    setUserLocation(coords);
+    saveSearchRequest(coords);
+  }
+
   const handleGetAutoLocation = useCallback(() => {
     setLoadingState("locating");
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        setUserLocation({ lat: latitude, lng: longitude });
+        handleLocationUpdate({ lat: latitude, lng: longitude });
         setLoadingState("idle");
       },
       (error) => {
@@ -135,14 +140,14 @@ export default function Home() {
     try {
       const matchedHospital = allHospitals.find(h => h.name.toLowerCase() === trimmedLocation.toLowerCase() || h.address.toLowerCase() === trimmedLocation.toLowerCase());
       if (matchedHospital) {
-        setUserLocation(matchedHospital.coordinates);
+        handleLocationUpdate(matchedHospital.coordinates);
         setSelectedHospital(matchedHospital);
       } else {
         const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(trimmedLocation)}&key=${apiKey}`);
         const data = await response.json();
         if (data.status === 'OK' && data.results[0]) {
           const { lat, lng } = data.results[0].geometry.location;
-          setUserLocation({ lat, lng });
+          handleLocationUpdate({ lat, lng });
         } else {
           toast({
             title: "Geocoding Error",
