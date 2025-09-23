@@ -1,29 +1,5 @@
-'use client';
-import { useAuth } from '@/hooks/use-auth';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Preloader } from '../components/layout/preloader';
+import React from 'react';
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const { user, userProfile, loading } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!loading) {
-      if (!user || userProfile?.role !== 'admin') {
-        router.push('/login');
-      }
-    }
-  }, [user, userProfile, loading, router]);
-
-  if (loading || !user || userProfile?.role !== 'admin') {
-    return <Preloader />;
-  }
-
-  return <div className='bg-secondary min-h-screen'>{children}</div>;
+export default function AdminLayout({children}: {children: React.ReactNode}) {
+  return <div className="bg-secondary min-h-screen">{children}</div>;
 }
