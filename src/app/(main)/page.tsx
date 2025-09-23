@@ -141,17 +141,24 @@ export default function Home() {
     if (!location) return;
     setLoadingState("searching");
     try {
-      const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=${apiKey}`);
-      const data = await response.json();
-      if (data.status === 'OK' && data.results[0]) {
-        const { lat, lng } = data.results[0].geometry.location;
-        setUserLocation({ lat, lng });
+      // First, check if the location is one of our hospitals
+      const matchedHospital = allHospitals.find(h => h.name === location || h.address === location);
+      if (matchedHospital) {
+        setUserLocation(matchedHospital.coordinates);
+        setSelectedHospital(matchedHospital);
       } else {
-        toast({
-          title: "Geocoding Error",
-          description: "Could not find coordinates for the location.",
-          variant: "destructive",
-        });
+        const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(location)}&key=${apiKey}`);
+        const data = await response.json();
+        if (data.status === 'OK' && data.results[0]) {
+          const { lat, lng } = data.results[0].geometry.location;
+          setUserLocation({ lat, lng });
+        } else {
+          toast({
+            title: "Geocoding Error",
+            description: "Could not find coordinates for the location.",
+            variant: "destructive",
+          });
+        }
       }
     } catch (error) {
       console.error("Geocoding API error:", error);
@@ -163,7 +170,7 @@ export default function Home() {
     } finally {
       setLoadingState("idle");
     }
-  }, [apiKey, toast]);
+  }, [apiKey, toast, allHospitals]);
 
   const handleSelectHospital = useCallback((hospital: RankedHospital) => {
     setSelectedHospital(hospital);
@@ -202,6 +209,7 @@ export default function Home() {
                             onLocate={handleGetAutoLocation}
                             isLocating={loadingState === 'locating'}
                             isSearching={loadingState === 'searching'}
+                            hospitals={allHospitals}
                         />
                         <SymptomChecker onSymptomSubmit={handleSymptomSubmit} isRanking={loadingState === 'ranking'} />
                      </div>
