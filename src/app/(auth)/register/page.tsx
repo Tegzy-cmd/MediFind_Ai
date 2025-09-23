@@ -11,6 +11,7 @@ import { registerSchema, type RegisterFormValues } from '@/lib/schema';
 import { signUp } from '@/lib/firebase/auth';
 import { Icons } from '@/app/components/icons';
 import Link from 'next/link';
+import { FirebaseError } from 'firebase/app';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -33,11 +34,28 @@ export default function RegisterPage() {
         description: 'Account created successfully. Please log in.',
       });
       router.push('/login');
-    } catch (error: any) {
+    } catch (error) {
+        let description = 'Something went wrong. Please try again.';
+        if (error instanceof FirebaseError) {
+            switch (error.code) {
+                case 'auth/email-already-in-use':
+                    description = 'This email address is already in use by another account.';
+                    break;
+                case 'auth/weak-password':
+                    description = 'The password is too weak. Please choose a stronger password.';
+                    break;
+                case 'auth/invalid-email':
+                    description = 'The email address is not valid.';
+                    break;
+                default:
+                    description = error.message;
+                    break;
+            }
+        }
       toast({
         variant: 'destructive',
         title: 'Registration Failed',
-        description: error.message || 'Something went wrong. Please try again.',
+        description: description,
       });
     }
   };
