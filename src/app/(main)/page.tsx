@@ -13,7 +13,6 @@ import { Preloader } from "@/app/components/layout/preloader";
 import { Card, CardContent } from "@/components/ui/card";
 import { LocationInput } from "@/app/components/finder/location-input";
 import { SymptomChecker } from "@/app/components/finder/symptom-checker";
-import { StatsBar } from "@/app/components/home/stats-bar";
 import { Features } from "@/app/components/home/features";
 import { EmergencyHotlines } from "@/app/components/home/emergency-hotlines";
 import type { RankedHospital, Coordinates } from "@/lib/types";
@@ -231,7 +230,6 @@ export default function Home() {
            </div>
           </section>
           
-          <StatsBar />
           <Features />
           <EmergencyHotlines />
 
