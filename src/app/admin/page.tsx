@@ -91,8 +91,8 @@ export default function AdminPage() {
         <p className="text-muted-foreground">Add, edit, or remove hospital data.</p>
       </div>
       
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="grid grid-cols-1 md:grid-cols-4 gap-8">
-        <TabsList className="flex-col h-fit p-2 md:col-span-1">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="grid grid-cols-1 md:grid-cols-12 gap-8">
+        <TabsList className="flex-col h-fit p-2 md:col-span-3">
           <TabsTrigger value="view" className="w-full justify-start">
             <Icons.hospital className="mr-2" /> View Hospitals
           </TabsTrigger>
@@ -101,7 +101,7 @@ export default function AdminPage() {
           </TabsTrigger>
         </TabsList>
 
-        <div className="md:col-span-3">
+        <div className="md:col-span-9">
             <TabsContent value="view">
               <Card>
                 <CardHeader>
@@ -197,4 +197,3 @@ export default function AdminPage() {
     </div>
   );
 }
-
