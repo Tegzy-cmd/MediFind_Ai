@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { ThemeToggle } from '@/app/components/theme-toggle';
 import { Icons } from '@/app/components/icons';
