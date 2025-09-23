@@ -3,12 +3,9 @@ import {
   signOut as firebaseSignOut,
   onAuthStateChanged as firebaseOnAuthStateChanged,
   createUserWithEmailAndPassword,
-  getApp,
-  getApps,
-  initializeApp,
   User,
 } from 'firebase/auth';
-import { auth, db } from './config';
+import { auth } from './config';
 import type { LoginFormValues, RegisterFormValues } from '@/lib/schema';
 import { FirebaseError } from 'firebase/app';
 import { createUserProfile } from './firestore';
