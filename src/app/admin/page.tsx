@@ -86,7 +86,7 @@ export default function AdminPage() {
 
   return (
     <div className="container py-8">
-      <div className="mb-8">
+      <div className="mb-8 text-center">
         <h1 className="text-3xl font-bold font-headline">Hospital Management</h1>
         <p className="text-muted-foreground">Add, edit, or remove hospital data.</p>
       </div>
