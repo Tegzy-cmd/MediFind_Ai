@@ -18,14 +18,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Icons } from '@/app/components/icons';
 import type { Hospital } from '@/lib/types';
 import HospitalForm from '@/app/components/admin/hospital-form';
 import DeleteHospitalDialog from '@/app/components/admin/delete-hospital-dialog';
-import { getHospitals } from '@/lib/firebase/firestore';
+import { getHospitals, signOutUser } from '@/lib/firebase/firestore';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ThemeToggle } from '@/app/components/theme-toggle';
+import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
 
 export default function AdminPage() {
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
@@ -35,6 +37,9 @@ export default function AdminPage() {
   const [selectedHospital, setSelectedHospital] = useState<Hospital | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  
+  const { toast } = useToast();
+  const router = useRouter();
 
   const fetchHospitals = async () => {
     setLoading(true);
@@ -77,6 +82,15 @@ export default function AdminPage() {
     fetchHospitals();
   };
 
+  const handleSignOut = async () => {
+    try {
+      await signOutUser();
+      toast({ title: 'Success', description: 'You have been signed out.' });
+      router.push('/login');
+    } catch (error) {
+      toast({ variant: 'destructive', title: 'Error', description: 'Failed to sign out.' });
+    }
+  }
 
   if (error) {
     return (
@@ -90,9 +104,10 @@ export default function AdminPage() {
 
   return (
     <div className="relative py-8 md:py-12">
-      <div className="absolute top-4 right-4">
-        <ThemeToggle />
-      </div>
+        <div className="absolute top-4 right-4 flex items-center gap-4">
+            <ThemeToggle />
+            <Button variant="outline" size="sm" onClick={handleSignOut}>Sign Out</Button>
+        </div>
       <div className="mb-8 text-center">
         <h1 className="text-3xl md:text-4xl font-bold font-headline mb-2">Hospital Management</h1>
       </div>

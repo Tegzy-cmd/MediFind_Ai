@@ -1,3 +1,4 @@
+
 import {
   collection,
   getDocs,
@@ -10,9 +11,11 @@ import {
   query,
   limit,
 } from 'firebase/firestore';
-import { db } from './config';
+import { auth, db } from './config';
 import type { Hospital, UserProfile } from '@/lib/types';
 import type { HospitalFormValues } from '@/lib/schema';
+import { signOut } from 'firebase/auth';
+
 
 const HOSPITAL_COLLECTION = 'hospitals';
 const USER_COLLECTION = 'users';
@@ -75,19 +78,34 @@ export async function deleteHospital(id: string) {
 }
 
 // User Profile Functions
-export async function createUserProfile(uid: string, data: { email: string }) {
+export async function createUserProfile(uid: string, data: { email: string, role?: 'admin' | 'viewer' }) {
+  const userDocRef = doc(db, USER_COLLECTION, uid);
+  const userDoc = await getDoc(userDocRef);
+
+  // If user profile already exists, do nothing
+  if (userDoc.exists()) {
+    return;
+  }
+  
   const usersRef = collection(db, USER_COLLECTION);
   const q = query(usersRef, limit(1));
   const snapshot = await getDocs(q);
 
+  // Default role is 'viewer'
   let role = 'viewer';
+  
   // If there are no users in the database, make the first one an admin
   if (snapshot.empty) {
     role = 'admin';
   }
 
-  return setDoc(doc(db, USER_COLLECTION, uid), {
-    ...data,
+  // If a role is explicitly passed, use it (for initial setup)
+  if (data.role) {
+    role = data.role;
+  }
+
+  return setDoc(userDocRef, {
+    email: data.email,
     role,
     createdAt: new Date(),
   });
@@ -100,4 +118,8 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
     return { uid: docSnap.id, ...docSnap.data() } as UserProfile;
   }
   return null;
+}
+
+export async function signOutUser() {
+  return signOut(auth);
 }
