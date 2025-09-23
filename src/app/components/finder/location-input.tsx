@@ -16,31 +16,30 @@ interface LocationInputProps {
 export function LocationInput({ onSearch, onLocate, isLocating, isSearching }: LocationInputProps) {
   const places = useMapsLibrary('places');
   const inputRef = useRef<HTMLInputElement>(null);
-  const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
   const [locationInput, setLocationInput] = useState('');
 
   useEffect(() => {
     if (!places || !inputRef.current) return;
-    const autocompleteInstance = new places.Autocomplete(inputRef.current, {
-      fields: ['formatted_address'],
+
+    const autocomplete = new places.Autocomplete(inputRef.current, {
+      fields: ['formatted_address', 'name'],
       componentRestrictions: { country: 'ng' },
     });
-    setAutocomplete(autocompleteInstance);
-  }, [places]);
-
-  useEffect(() => {
-    if (!autocomplete) return;
+    
     const listener = autocomplete.addListener('place_changed', () => {
       const place = autocomplete.getPlace();
-      if(place.formatted_address) {
-        setLocationInput(place.formatted_address);
-        onSearch(place.formatted_address);
+      const newLocation = place.formatted_address || place.name;
+      if (newLocation) {
+        setLocationInput(newLocation);
+        onSearch(newLocation);
       }
     });
+    
     return () => {
-      listener.remove();
-    };
-  }, [autocomplete, onSearch]);
+        listener.remove();
+    }
+
+  }, [places, onSearch]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
