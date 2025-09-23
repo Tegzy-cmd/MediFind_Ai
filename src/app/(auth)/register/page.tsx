@@ -7,36 +7,37 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { loginSchema, type LoginFormValues } from '@/lib/schema';
-import { signIn } from '@/lib/firebase/auth';
+import { registerSchema, type RegisterFormValues } from '@/lib/schema';
+import { signUp } from '@/lib/firebase/auth';
 import { Icons } from '@/app/components/icons';
 import Link from 'next/link';
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const router = useRouter();
   const { toast } = useToast();
 
-  const form = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
+  const form = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
       email: '',
       password: '',
+      confirmPassword: '',
     },
   });
 
-  const onSubmit = async (data: LoginFormValues) => {
+  const onSubmit = async (data: RegisterFormValues) => {
     try {
-      await signIn(data);
+      await signUp(data);
       toast({
         title: 'Success',
-        description: 'Logged in successfully. Redirecting...',
+        description: 'Account created successfully. Please log in.',
       });
-      router.push('/admin');
-    } catch (error) {
+      router.push('/login');
+    } catch (error: any) {
       toast({
         variant: 'destructive',
-        title: 'Login Failed',
-        description: 'Invalid email or password. Please try again.',
+        title: 'Registration Failed',
+        description: error.message || 'Something went wrong. Please try again.',
       });
     }
   };
@@ -44,9 +45,9 @@ export default function LoginPage() {
   return (
     <Card className="w-full max-w-sm">
       <CardHeader className="text-center">
-        <Icons.hospital className="mx-auto h-8 w-8 text-primary" />
-        <CardTitle className="mt-2">Admin Login</CardTitle>
-        <CardDescription>Access the MediFind AI dashboard.</CardDescription>
+        <Icons.userPlus className="mx-auto h-8 w-8 text-primary" />
+        <CardTitle className="mt-2">Create Admin Account</CardTitle>
+        <CardDescription>Join the MediFind admin team.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -77,16 +78,29 @@ export default function LoginPage() {
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirm Password</FormLabel>
+                  <FormControl>
+                    <Input type="password" placeholder="••••••••" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? 'Signing In...' : 'Sign In'}
+              {form.formState.isSubmitting ? 'Creating Account...' : 'Create Account'}
             </Button>
           </form>
         </Form>
       </CardContent>
       <CardFooter className="text-sm text-center block">
-        Don&apos;t have an account?{' '}
-        <Link href="/register" className="text-primary hover:underline">
-          Register
+        Already have an account?{' '}
+        <Link href="/login" className="text-primary hover:underline">
+          Login
         </Link>
       </CardFooter>
     </Card>

@@ -30,6 +30,7 @@ import {
   FireExtinguisher,
   Copyright,
   Flame,
+  UserPlus,
 } from 'lucide-react';
 
 export const Icons = {
@@ -56,6 +57,7 @@ export const Icons = {
   trash: Trash2,
   edit: Edit,
   user: User,
+  userPlus: UserPlus,
   users: Users,
   moreVertical: MoreVertical,
   clock: Clock,
