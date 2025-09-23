@@ -8,11 +8,9 @@ export default async function AdminPage() {
   const hospitals = await getHospitals();
 
   return (
-    <div className="min-h-screen bg-secondary">
-      <div className="container py-8">
-        <Header />
-        <HospitalTable hospitals={hospitals} />
-      </div>
+    <div className="container py-8">
+      <Header />
+      <HospitalTable hospitals={hospitals} />
     </div>
   );
 }

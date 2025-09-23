@@ -29,5 +29,5 @@ export default function AdminLayout({
     );
   }
 
-  return <div>{children}</div>;
+  return <div className='bg-secondary min-h-screen'>{children}</div>;
 }
