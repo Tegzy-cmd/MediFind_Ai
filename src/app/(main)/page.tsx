@@ -81,9 +81,7 @@ export default function Home() {
         });
         setLoadingState("error");
       } finally {
-        setTimeout(() => {
-          setLoadingState("idle");
-        }, 1500);
+        setLoadingState("idle");
       }
     };
     init();
