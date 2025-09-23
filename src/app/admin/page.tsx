@@ -166,7 +166,7 @@ export default function AdminPage() {
                       <TableCell className="font-medium whitespace-nowrap">{hospital.name}</TableCell>
                       <TableCell className="whitespace-nowrap text-muted-foreground">{hospital.address}</TableCell>
                       <TableCell>
-                        <div className="flex flex-wrap gap-1.5 min-w-[200px]">
+                        <div className="flex flex-wrap gap-2 min-w-[200px]">
                           {hospital.specialties.slice(0, 3).map((s) => (
                             <Badge key={s} variant="secondary" className="whitespace-nowrap">{s}</Badge>
                           ))}
