@@ -25,6 +25,7 @@ import HospitalForm from '@/app/components/admin/hospital-form';
 import DeleteHospitalDialog from '@/app/components/admin/delete-hospital-dialog';
 import { getHospitals } from '@/lib/firebase/firestore';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ThemeToggle } from '@/app/components/theme-toggle';
 
 export default function AdminPage() {
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
@@ -88,14 +89,17 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="py-8 md:py-12">
+    <div className="relative py-8 md:py-12">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
       <div className="mb-8 text-center">
         <h1 className="text-3xl md:text-4xl font-bold font-headline mb-2">Hospital Management</h1>
       </div>
       
-      <div className="flex justify-center">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
+      <div className="flex justify-center px-4">
+        <Card className="w-full max-w-5xl">
+          <CardHeader className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div className="space-y-1.5">
               <CardTitle>Existing Hospitals</CardTitle>
               <CardDescription>Browse and manage all registered medical facilities.</CardDescription>
@@ -108,7 +112,7 @@ export default function AdminPage() {
             {loading ? (
               <div className="space-y-4">
                 {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="flex items-center space-x-4">
+                  <div key={i} className="flex items-center space-x-4 p-2">
                     <Skeleton className="h-12 w-12 rounded-lg" />
                     <div className="space-y-2 flex-1">
                       <Skeleton className="h-4 w-3/4" />
@@ -120,7 +124,7 @@ export default function AdminPage() {
               </div>
             ) : (
               <div className="overflow-x-auto">
-              <Table className="min-w-[600px]">
+              <Table className="min-w-[800px]">
                 <TableHeader>
                   <TableRow>
                     <TableHead>Name</TableHead>
@@ -135,7 +139,7 @@ export default function AdminPage() {
                       <TableCell className="font-medium whitespace-nowrap">{hospital.name}</TableCell>
                       <TableCell className="whitespace-nowrap text-muted-foreground">{hospital.address}</TableCell>
                       <TableCell>
-                        <div className="flex flex-wrap gap-1 min-w-[200px]">
+                        <div className="flex flex-wrap gap-1.5 min-w-[200px]">
                           {hospital.specialties.slice(0, 3).map((s) => (
                             <Badge key={s} variant="secondary" className="whitespace-nowrap">{s}</Badge>
                           ))}
