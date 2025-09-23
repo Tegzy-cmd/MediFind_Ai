@@ -33,26 +33,6 @@ export type RankHospitalsBySymptomsOutput = z.infer<
   typeof RankHospitalsBySymptomsOutputSchema
 >;
 
-export async function rankHospitalsBySymptoms(
-  input: RankHospitalsBySymptomsInput
-): Promise<RankHospitalsBySymptomsOutput> {
-  return rankHospitalsBySymptomsFlow(input);
-}
-
-const prompt = ai.definePrompt({
-  name: 'rankHospitalsBySymptomsPrompt',
-  input: {schema: RankHospitalsBySymptomsInputSchema},
-  output: {schema: RankHospitalsBySymptomsOutputSchema},
-  prompt: `You are an expert medical assistant tasked with ranking hospitals based on their relevance to a patient's symptoms.\
-  Given the following symptoms: {{{symptoms}}}, rank the following hospitals based on how well their specialties align with the symptoms.\
-  Provide a numbered JSON list in the format:\
-  [{\"hospital\": \"Hospital Name\", \"rank\": 1, \"reason\": \"Explanation for the ranking\"}, ...].  The list must include ALL hospitals.
-  Hospitals: {{#each hospitals}}{{\n    name: name, specialties: specialties\n  }}{{/each}}\n  Ensure that the ranks are consecutive integers starting from 1, and each hospital has a unique rank.\
-  The reason should be short and concise.\
-  Rank the hospitals and include a detailed explanation for each ranking.\
-  `,
-});
-
 const rankHospitalsBySymptomsFlow = ai.defineFlow(
   {
     name: 'rankHospitalsBySymptomsFlow',
@@ -60,7 +40,28 @@ const rankHospitalsBySymptomsFlow = ai.defineFlow(
     outputSchema: RankHospitalsBySymptomsOutputSchema,
   },
   async input => {
+    const prompt = ai.definePrompt({
+        name: 'rankHospitalsBySymptomsPrompt',
+        input: {schema: RankHospitalsBySymptomsInputSchema},
+        output: {schema: RankHospitalsBySymptomsOutputSchema},
+        prompt: `You are an expert medical assistant tasked with ranking hospitals based on their relevance to a patient's symptoms.\
+  Given the following symptoms: {{{symptoms}}}, rank the following hospitals based on how well their specialties align with the symptoms.\
+  Provide a numbered JSON list in the format:\
+  [{\"hospital\": \"Hospital Name\", \"rank\": 1, \"reason\": \"Explanation for the ranking\"}, ...].  The list must include ALL hospitals.
+  Hospitals: {{#each hospitals}}{{\n    name: name, specialties: specialties\n  }}{{/each}}\n  Ensure that the ranks are consecutive integers starting from 1, and each hospital has a unique rank.\
+  The reason should be short and concise.\
+  Rank the hospitals and include a detailed explanation for each ranking.\
+  `,
+    });
+
     const {output} = await prompt(input);
     return output!;
   }
 );
+
+
+export async function rankHospitalsBySymptoms(
+  input: RankHospitalsBySymptomsInput
+): Promise<RankHospitalsBySymptomsOutput> {
+  return rankHospitalsBySymptomsFlow(input);
+}

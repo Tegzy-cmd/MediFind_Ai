@@ -116,7 +116,13 @@ export default function Home() {
       const rankedHospitals = await getRankedHospitals(symptoms, currentHospitals, userLocation);
        
       const hospitalMap = new Map(rankedHospitals.map(h => [h.id, h]));
-      setAllHospitals(prev => prev.map(h => hospitalMap.get(h.id) || h));
+      
+      setAllHospitals(prevHospitals => 
+        prevHospitals.map(h => {
+          const rankedData = hospitalMap.get(h.id);
+          return rankedData ? { ...h, ...rankedData } : h;
+        })
+      );
 
       toast({
         title: "Success",

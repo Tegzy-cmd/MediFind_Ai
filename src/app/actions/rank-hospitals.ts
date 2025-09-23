@@ -25,40 +25,35 @@ export async function rankHospitalsBySymptoms(
   hospitals: Hospital[],
   userLocation: Coordinates
 ): Promise<RankedHospital[]> {
-  // 1. Calculate distances for all hospitals
-  const allHospitalsWithDistance = hospitals
-    .map(hospital => ({
-      ...hospital,
-      distance: getDistance(userLocation, hospital.coordinates),
-    }));
-
-  // 2. Prepare data for the AI flow (use all hospitals for ranking)
-  const hospitalsForAI = allHospitalsWithDistance.map(h => ({
+  // 1. Prepare data for the AI flow (use all hospitals for ranking)
+  const hospitalsForAI = hospitals.map(h => ({
     name: h.name,
     specialties: h.specialties,
   }));
 
-  // 3. Call the Genkit flow
+  // 2. Call the Genkit flow
   const rankedResults = await rankHospitalsBySymptomsFlow({
     symptoms,
     hospitals: hospitalsForAI,
   });
 
-  // 4. Merge AI ranking with hospital data
+  // 3. Merge AI ranking with hospital data
   const rankedHospitalsMap = new Map(
     rankedResults.map(r => [r.hospital, { rank: r.rank, reason: r.reason }])
   );
 
-  const mergedHospitals: RankedHospital[] = allHospitalsWithDistance.map(hospital => {
+  const mergedHospitals: RankedHospital[] = hospitals.map(hospital => {
     const ranking = rankedHospitalsMap.get(hospital.name);
+    const distance = getDistance(userLocation, hospital.coordinates);
     return {
       ...hospital,
+      distance,
       rank: ranking?.rank,
       reason: ranking?.reason,
     };
   });
 
-  // 5. Sort by AI rank, then by distance
+  // 4. Sort by AI rank, then by distance
   mergedHospitals.sort((a, b) => (a.rank ?? Infinity) - (b.rank ?? Infinity) || a.distance - b.distance);
   
   return mergedHospitals;
