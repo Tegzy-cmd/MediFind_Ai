@@ -87,10 +87,6 @@ export default {
             height: '0',
           },
         },
-        'pulse-emergency': {
-          '0%, 100%': { opacity: '1' },
-          '50%': { opacity: '0.8' },
-        },
         'fade-in-up': {
             '0%': {
                 opacity: '0',
@@ -105,7 +101,6 @@ export default {
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'pulse-emergency': 'pulse-emergency 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'fade-in-up': 'fade-in-up 0.5s ease-out',
       },
     },
