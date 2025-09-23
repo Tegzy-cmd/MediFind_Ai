@@ -24,8 +24,8 @@ export function HospitalDetails({ hospital, onOpenChange, userLocation }: Hospit
   const isOpen = !!hospital;
 
   const directionsUrl = userLocation 
-    ? `https://www.google.com/maps/dir/${userLocation.lat},${userLocation.lng}/${hospital?.coordinates.lat},${hospital?.coordinates.lng}`
-    : `https://www.google.com/maps/dir/?api=1&destination=${hospital?.coordinates.lat},${hospital?.coordinates.lng}`;
+    ? `https://www.google.com/maps/dir/${userLocation.lat},${userLocation.lng}/${hospital?.name}, ${hospital?.address}`
+    : `https://www.google.com/maps/dir/?api=1&destination=${hospital?.name}, ${hospital?.address}`;
 
 
   return (
